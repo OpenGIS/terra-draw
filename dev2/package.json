@@ -1,0 +1,28 @@
+{
+	"name": "Terra Draw Dev",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "nuxt build",
+		"dev": "nuxt dev",
+		"generate": "nuxt generate",
+		"preview": "nuxt preview",
+		"postinstall": "nuxt prepare"
+	},
+	"devDependencies": {
+		"@arcgis/core": "^4.28.10",
+		"@googlemaps/js-api-loader": "^1.16.2",
+		"@nuxt/devtools": "latest",
+		"leaflet": "^1.9.4",
+		"less": "^4.2.0",
+		"mapbox-gl": "^3.6.2",
+		"nuxt": "^3.8.2",
+		"ol": "^8.2.0",
+		"prettier": "^3.1.0",
+		"vue": "^3.3.8"
+	},
+	"dependencies": {
+		"@pinia/nuxt": "^0.5.1",
+		"pinia": "^2.1.7"
+	}
+}
