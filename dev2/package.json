@@ -15,7 +15,7 @@
 		"@nuxt/devtools": "latest",
 		"leaflet": "^1.9.4",
 		"less": "^4.2.0",
-		"mapbox-gl": "^3.6.2",
+		"mapbox-gl": "^3.0.0",
 		"nuxt": "^3.8.2",
 		"ol": "^8.2.0",
 		"prettier": "^3.1.0",

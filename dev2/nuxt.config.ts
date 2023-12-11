@@ -13,7 +13,7 @@ export default defineNuxtConfig({
 		presets: [
 			// Load Terra Draw
 			{
-				from: "terra-draw",
+				from: "../../src/terra-draw.ts",
 				imports: [
 					"TerraDraw",
 
