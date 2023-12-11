@@ -8,33 +8,39 @@ export default defineNuxtConfig({
 			GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
 		},
 	},
+
+	css: ["leaflet/dist/leaflet.css", "maplibre-gl/dist/maplibre-gl.css"],
+
 	imports: {
 		dirs: ["stores"],
 		presets: [
 			// Load Terra Draw
-			// {
-			// from: "../../src/terra-draw.ts",
-			// imports: [
-			// 	"TerraDraw",
-			// 	//Adapters
-			// 	"TerraDrawMapLibreGLAdapter",
-			// 	"TerraDrawOpenLayersAdapter",
-			// 	"TerraDrawMapboxGLAdapter",
-			// 	"TerraDrawLeafletAdapter",
-			// 	"TerraDrawGoogleMapsAdapter",
-			// 	//Modes
-			// 	"TerraDrawFreehandMode",
-			// 	"TerraDrawLineStringMode",
-			// 	"TerraDrawCircleMode",
-			// 	"TerraDrawGreatCircleMode",
-			// 	"TerraDrawPointMode",
-			// 	"TerraDrawPolygonMode",
-			// 	"TerraDrawRectangleMode",
-			// 	"TerraDrawSelectMode",
-			// 	],
-			// },
+			{
+				from: "../../dist/terra-draw.modern.js",
+				imports: [
+					"TerraDraw",
+
+					//Adapters
+					"TerraDrawMapLibreGLAdapter",
+					"TerraDrawOpenLayersAdapter",
+					"TerraDrawMapboxGLAdapter",
+					"TerraDrawLeafletAdapter",
+					"TerraDrawGoogleMapsAdapter",
+
+					//Modes
+					"TerraDrawFreehandMode",
+					"TerraDrawLineStringMode",
+					"TerraDrawCircleMode",
+					"TerraDrawGreatCircleMode",
+					"TerraDrawPointMode",
+					"TerraDrawPolygonMode",
+					"TerraDrawRectangleMode",
+					"TerraDrawSelectMode",
+				],
+			},
 		],
 	},
+
 	modules: [
 		[
 			"@pinia/nuxt",

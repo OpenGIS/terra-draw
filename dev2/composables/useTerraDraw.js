@@ -1,22 +1,3 @@
-import {
-	TerraDraw,
-	TerraDrawPointMode,
-	TerraDrawCircleMode,
-	TerraDrawLineStringMode,
-	TerraDrawPolygonMode,
-	TerraDrawSelectMode,
-	TerraDrawFreehandMode,
-	TerraDrawRectangleMode,
-	TerraDrawGreatCircleMode,
-	TerraDrawRenderMode,
-	TerraDrawMapboxGLAdapter,
-	TerraDrawLeafletAdapter,
-	TerraDrawGoogleMapsAdapter,
-	TerraDrawMapLibreGLAdapter,
-	TerraDrawArcGISMapsSDKAdapter,
-	TerraDrawOpenLayersAdapter,
-} from "../../src/terra-draw.ts";
-
 export function useTerraDraw() {
 	const { activeMode } = storeToRefs(useTerraStore());
 

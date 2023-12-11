@@ -129,42 +129,14 @@ body {
   }
 }
 
-.page {
-  .nav {
-    padding: 5px;
-    background-color: #333;
-    .nav-item {
-      &.map-toggle {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        div {
-          margin-right: 5px;
-          padding: 10px;
-          border-radius: 5px;
-          border: 1px solid #fff;
-          color: #999;
-          cursor: pointer;
-
-          &.active {
-            background-color: #fff;
-            color: #333;
-          }
-        }
-      }
-    }
-  }
-
-  .maps {
-    display: flex;
-    flex-direction: row;
+.maps {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100vh;
+  .map {
     width: 100%;
-    height: 100vh;
-    .map {
-      width: 100%;
-      height: 100%;
-    }
+    height: 100%;
   }
 }
 </style>
