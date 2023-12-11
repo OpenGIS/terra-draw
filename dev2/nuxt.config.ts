@@ -12,29 +12,27 @@ export default defineNuxtConfig({
 		dirs: ["stores"],
 		presets: [
 			// Load Terra Draw
-			{
-				from: "../../src/terra-draw.ts",
-				imports: [
-					"TerraDraw",
-
-					//Adapters
-					"TerraDrawMapLibreGLAdapter",
-					"TerraDrawOpenLayersAdapter",
-					"TerraDrawMapboxGLAdapter",
-					"TerraDrawLeafletAdapter",
-					"TerraDrawGoogleMapsAdapter",
-
-					//Modes
-					"TerraDrawFreehandMode",
-					"TerraDrawLineStringMode",
-					"TerraDrawCircleMode",
-					"TerraDrawGreatCircleMode",
-					"TerraDrawPointMode",
-					"TerraDrawPolygonMode",
-					"TerraDrawRectangleMode",
-					"TerraDrawSelectMode",
-				],
-			},
+			// {
+			// from: "../../src/terra-draw.ts",
+			// imports: [
+			// 	"TerraDraw",
+			// 	//Adapters
+			// 	"TerraDrawMapLibreGLAdapter",
+			// 	"TerraDrawOpenLayersAdapter",
+			// 	"TerraDrawMapboxGLAdapter",
+			// 	"TerraDrawLeafletAdapter",
+			// 	"TerraDrawGoogleMapsAdapter",
+			// 	//Modes
+			// 	"TerraDrawFreehandMode",
+			// 	"TerraDrawLineStringMode",
+			// 	"TerraDrawCircleMode",
+			// 	"TerraDrawGreatCircleMode",
+			// 	"TerraDrawPointMode",
+			// 	"TerraDrawPolygonMode",
+			// 	"TerraDrawRectangleMode",
+			// 	"TerraDrawSelectMode",
+			// 	],
+			// },
 		],
 	},
 	modules: [
