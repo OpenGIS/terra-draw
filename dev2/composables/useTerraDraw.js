@@ -7,13 +7,6 @@ export function useTerraDraw() {
 	// All Modes
 	const getModes = () => {
 		return [
-			new TerraDrawFreehandMode(),
-			new TerraDrawLineStringMode(),
-			new TerraDrawCircleMode(),
-			new TerraDrawGreatCircleMode(),
-			new TerraDrawPointMode(),
-			new TerraDrawPolygonMode(),
-			new TerraDrawRectangleMode(),
 			new TerraDrawSelectMode({
 				// Mode features
 				flags: {
@@ -130,6 +123,13 @@ export function useTerraDraw() {
 					midPointOutlineWidth: 1, // Integer
 				},
 			}),
+			new TerraDrawFreehandMode(),
+			new TerraDrawLineStringMode(),
+			new TerraDrawCircleMode(),
+			new TerraDrawGreatCircleMode(),
+			new TerraDrawPointMode(),
+			new TerraDrawPolygonMode(),
+			new TerraDrawRectangleMode(),
 			// new TerraDrawRenderMode({
 			// 	modeName: "render",
 			// }),
