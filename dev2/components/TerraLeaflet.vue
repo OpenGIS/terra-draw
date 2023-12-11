@@ -1,8 +1,6 @@
 <script setup>
-const { init, features } = useTerraLeaflet();
-
 onMounted(() => {
-	init("leaflet-map");
+	const { init, features } = useTerraLeaflet("leaflet-map");
 });
 </script>
 
@@ -14,4 +12,9 @@ onMounted(() => {
 	</div>
 </template>
 
-<style></style>
+<style>
+#leaflet-map {
+	width: 100%;
+	height: 100%;
+}
+</style>

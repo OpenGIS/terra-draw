@@ -3,11 +3,13 @@ export const useTerraStore = defineStore("terra", () => {
 	const lat = ref(51.179026);
 	const zoom = ref(16);
 
+	const { features: sharedFeatures } = useDemo();
+
 	const activeMode = ref("select");
 
 	function changeMode(mode) {
 		activeMode.value = mode;
 	}
 
-	return { lat, lng, zoom, activeMode, changeMode };
+	return { lat, lng, zoom, activeMode, changeMode, sharedFeatures };
 });

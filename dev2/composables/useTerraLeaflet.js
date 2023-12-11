@@ -2,14 +2,14 @@
 import * as lib from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-export function useTerraLeaflet() {
+export function useTerraLeaflet(id = "map") {
 	const { lng, lat, zoom } = storeToRefs(useTerraStore());
 
 	const state = ref({
 		features: [],
 	});
 
-	const init = (id = "map") => {
+	(() => {
 		// Create Map
 		const map = lib.map(id, {
 			center: [lat.value, lng.value],
@@ -37,7 +37,7 @@ export function useTerraLeaflet() {
 		);
 
 		state.value = drawState.value;
-	};
+	})();
 
 	// Get features
 	const features = computed(() => {
@@ -45,7 +45,6 @@ export function useTerraLeaflet() {
 	});
 
 	return {
-		init,
 		state,
 		features,
 	};
