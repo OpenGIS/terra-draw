@@ -12,20 +12,23 @@ import {
 	TerraDrawSelectMode,
 	TerraDrawFreehandMode,
 	TerraDrawRectangleMode,
+	TerraDrawGreatCircleMode,
+	TerraDrawRenderMode,
 	TerraDrawMapboxGLAdapter,
 	TerraDrawLeafletAdapter,
 	TerraDrawGoogleMapsAdapter,
 	TerraDrawMapLibreGLAdapter,
-	TerraDrawGreatCircleMode,
 	TerraDrawArcGISMapsSDKAdapter,
+	TerraDrawOpenLayersAdapter,
 } from "../../src/terra-draw";
-import { TerraDrawRenderMode } from "../../src/modes/render/render.mode";
+
+// import { TerraDrawRenderMode } from "../../src/modes/render/render.mode";
+// import { TerraDrawOpenLayersAdapter } from "../../src/adapters/openlayers.adapter";
 
 import Circle from "ol/geom/Circle";
 import Feature from "ol/Feature";
 import GeoJSON from "ol/format/GeoJSON";
 import Map from "ol/Map";
-import { TerraDrawOpenLayersAdapter } from "../../src/adapters/openlayers.adapter";
 import View from "ol/View";
 import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
 import { OSM, Vector as VectorSource } from "ol/source";

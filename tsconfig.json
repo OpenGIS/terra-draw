@@ -18,5 +18,6 @@
 		// "compilerOptions": {
 		//     "skipLibCheck": true
 		// }
-	}
+	},
+	"exclude": ["dev2"]
 }
