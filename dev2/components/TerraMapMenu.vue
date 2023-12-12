@@ -14,11 +14,25 @@ const props = defineProps({
 		default: "select",
 	},
 });
+
+const count = computed(() => {
+	return {
+		total: props.features.length,
+		points: props.features.filter((f) => f.geometry.type === "Point").length,
+		lines: props.features.filter((f) => f.geometry.type === "LineString")
+			.length,
+		polygons: props.features.filter((f) => f.geometry.type === "Polygon")
+			.length,
+	};
+});
 </script>
 
 <template>
 	<div class="map-menu">
-		<div class="title">{{ title }}</div>
+		<div class="title">{{ title }} - {{ count.total }} Features</div>
+		{{ count.points }} Points, {{ count.lines }} Lines,
+		{{ count.polygons }} Polygons
+
 		<textarea v-show="features.length" class="features" readonly>{{
 			JSON.stringify(features)
 		}}</textarea>
@@ -30,36 +44,27 @@ const props = defineProps({
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 100%;
-	padding: 10px;
+	width: 96%;
+	padding: 2%;
 	z-index: 1000;
 	background-color: rgba(0, 0, 0, 0.5);
 
 	.title {
-		font-size: 24px;
+		font-size: 14px;
 		font-weight: bold;
 		color: #fff;
 		margin-bottom: 10px;
 	}
 
-	.modes {
-		.item {
-			position: relative;
-			display: block;
-			width: 100%;
-			height: 50px;
-			line-height: 50px;
-			text-align: center;
-			font-size: 18px;
-			font-weight: bold;
-			color: #fff;
-			transition: all 0.2s ease-in-out;
-			cursor: pointer;
-
-			&:hover {
-				background-color: rgba(0, 0, 0, 0.75);
-			}
-		}
+	textarea {
+		width: 100%;
+		height: 100px;
+		background-color: rgba(0, 0, 0, 0.5);
+		border: none;
+		resize: none;
+		color: #fff;
+		font-size: 8px;
+		font-family: monospace;
 	}
 }
 </style>

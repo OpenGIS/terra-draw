@@ -10,8 +10,6 @@ export function useTerraLeaflet(id = "map") {
 	});
 
 	onMounted(() => {
-		console.debug("useTerraLeaflet: Mounted");
-
 		// Create Map
 		const map = lib.map(id, {
 			center: [lat.value, lng.value],
@@ -19,6 +17,9 @@ export function useTerraLeaflet(id = "map") {
 			zoom: zoom.value + 1,
 			maxZoom: 24,
 		});
+
+		// Remove zoom
+		map.removeControl(map.zoomControl);
 
 		// OSM Tiles
 		lib

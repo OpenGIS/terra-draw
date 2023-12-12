@@ -113,7 +113,7 @@ const isActive = (map) => {
       </div>
 
       <div class="adapter">
-        <!-- <terra-maplibre v-if="isActive('maplibre')" /> -->
+        <terra-maplibre v-if="isActive('maplibre')" />
       </div>
 
       <!-- <terra-openlayers v-if="isActive('openlayers')" /> -->
@@ -131,3 +131,79 @@ const isActive = (map) => {
   </div>
   <!-- END App -->
 </template>
+
+<style lang="less">
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  color: #f9f9f9;
+  background-color: #333;
+
+  #app {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    .nav {
+      padding: 10px;
+      height: 30px;
+      display: flex;
+
+      .nav-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        div {
+          margin-right: 5px;
+          padding: 10px;
+          border-radius: 5px;
+          border: 1px solid #333;
+          cursor: pointer;
+          background-color: #333;
+          color: #f9f9f9;
+
+          &.mode-select {
+            position: absolute;
+            right: 10px;
+            padding: 7px;
+            font-weight: bold;
+
+            select {
+              margin-left: 5px;
+            }
+          }
+
+          &.mode-select,
+          &.active {
+            background-color: #f9f9f9;
+            color: #333;
+          }
+        }
+      }
+    }
+
+    .adapters {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      height: 100%;
+
+      .adapter {
+        position: relative;
+        width: 100%;
+        border-right: 1px solid #333;
+        .map {
+        }
+      }
+    }
+  }
+}
+</style>
