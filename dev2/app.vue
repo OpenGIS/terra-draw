@@ -119,7 +119,7 @@ const isActive = (map) => {
       <!-- <terra-openlayers v-if="isActive('openlayers')" /> -->
 
       <div class="adapter" v-show="isActive('google')">
-        <!-- <terra-google v-if="isActive('google')" /> -->
+        <terra-google />
       </div>
 
       <div class="adapter" v-show="isActive('mapbox')">

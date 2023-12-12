@@ -12,7 +12,7 @@ export function useTerraMaplibre(id = "map") {
 	onMounted(() => {
 		// Create Map
 		const map = new lib.Map({
-			container: "maplibre-map",
+			container: id,
 			style: {
 				version: 8,
 				sources: {

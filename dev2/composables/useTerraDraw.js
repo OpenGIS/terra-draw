@@ -15,9 +15,6 @@ export function useTerraDraw(adapter = null) {
 	});
 
 	const updateFeatures = () => {
-		console.debug("useTerraDraw: updateFeatures");
-		console.debug(draw.getSnapshot());
-
 		features.value = draw.getSnapshot();
 	};
 
@@ -29,15 +26,29 @@ export function useTerraDraw(adapter = null) {
 		draw.setMode(activeMode.value);
 	});
 
-	// Watch for Feature changes
-	watch(sharedFeatures, () => {
+	watchEffect(() => {
+		// Watch for Feature changes
 		if (sharedFeatures.value.length > 0) {
+			console.debug("useTerraDraw: sharedFeatures");
+			console.debug(sharedFeatures);
+
 			//Add Features
 			draw.addFeatures(sharedFeatures.value);
 
 			updateFeatures();
 		}
 	});
+
+	// // Watch for Feature changes
+	// if (sharedFeatures.value.length > 0) {
+	// 	console.debug("useTerraDraw: sharedFeatures");
+	// 	console.debug(sharedFeatures);
+
+	// 	//Add Features
+	// 	draw.addFeatures(sharedFeatures.value);
+
+	// 	updateFeatures();
+	// }
 
 	// Events
 	draw.on("change", (ids, type) => {
