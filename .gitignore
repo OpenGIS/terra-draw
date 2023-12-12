@@ -6,7 +6,7 @@ node_modules/
 example/dist/
 example/node_modules/
 ROADMAP.md
-data/
+/data/
 scratch/
 .idea
 .env*
