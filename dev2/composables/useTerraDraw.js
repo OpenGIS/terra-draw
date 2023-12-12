@@ -2,10 +2,11 @@ export function useTerraDraw(adapter = null) {
 	if (!adapter) {
 		return;
 	}
+
 	const { getModes } = useTerraModes();
 	const { activeMode, sharedFeatures } = storeToRefs(useTerraStore());
 
-	const state = ref({ status: null, features: null });
+	const state = ref({ status: null, features: [] });
 
 	// Create Terra Draw
 	const draw = new TerraDraw({
@@ -15,6 +16,7 @@ export function useTerraDraw(adapter = null) {
 
 	// Start drawing
 	draw.start();
+	state.value.features = draw.getSnapshot();
 
 	// Watch for Mode changes
 	watch(activeMode, () => {
@@ -32,24 +34,18 @@ export function useTerraDraw(adapter = null) {
 	// Events
 	draw.on("change", (ids, type) => {
 		//Done editing
-		// if (type === "delete") {
-		// 	// Get the Store snapshot
-		// 	state.value.features = draw.getSnapshot();
-		// }
+		//if (type === "delete" || type === "create") {
+		// Get the Store snapshot
+		state.value.features = draw.getSnapshot();
+		//}
 	});
 
 	draw.setMode(activeMode.value);
 
 	state.value.status = "init";
 
-	// Get features
-	const features = computed(() => {
-		return draw.getSnapshot();
-	});
-
 	return {
 		draw,
 		state,
-		features,
 	};
 }

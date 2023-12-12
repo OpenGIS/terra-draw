@@ -1,39 +1,13 @@
 <script setup>
 const terraStore = useTerraStore();
 
-const props = defineProps({
-	title: {
-		type: String,
-		default: "",
-	},
-	features: {
-		default: [],
-	},
-	activeMode: {
-		type: String,
-		default: "select",
-	},
+const props = defineProps(["title", "features"]);
+
+const features = toRef(props, "features");
+
+onMounted(() => {
+	console.debug(features.value);
 });
-
-// watch(props, (props) => {
-// 	console.debug(props);
-
-// 	debugger;
-// });
-
-// onMounted(() => {
-// 	console.debug(props.features);
-
-// 	debugger;
-
-setInterval(() => {
-	if (props.features.length) {
-		console.debug(props.features);
-
-		debugger;
-	}
-}, 1000);
-// });
 </script>
 
 <template>

@@ -1,19 +1,19 @@
 <script setup>
+const { state, init } = useTerraLeaflet("leaflet-map");
+
 onMounted(() => {
-	const { features } = useTerraLeaflet("leaflet-map");
-
-	setInterval(() => {
-		if (features.value.length) {
-			console.debug(features.value);
-
-			debugger;
-		}
-	}, 1000);
+	init();
 });
 </script>
 
 <template>
-	<terra-map-menu title="Leaflet" :features="features" />
+	{{ JSON.stringify(state.features) }}
+
+	<terra-map-menu
+		v-show="state.features.length"
+		title="Leaflet"
+		:features="state.features"
+	/>
 
 	<div class="map" id="leaflet-map"></div>
 </template>

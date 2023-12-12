@@ -9,37 +9,36 @@ export function useTerraLeaflet(id = "map") {
 		features: [],
 	});
 
-	// Create Map
-	const map = lib.map(id, {
-		center: [lat.value, lng.value],
-		// Bump up zoom to match others
-		zoom: zoom.value + 1,
-		maxZoom: 24,
-	});
+	const init = () => {
+		// Create Map
+		const map = lib.map(id, {
+			center: [lat.value, lng.value],
+			// Bump up zoom to match others
+			zoom: zoom.value + 1,
+			maxZoom: 24,
+		});
 
-	// OSM Tiles
-	lib
-		.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-			attribution:
-				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-		})
-		.addTo(map);
+		// OSM Tiles
+		lib
+			.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+				attribution:
+					'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+			})
+			.addTo(map);
 
-	// Create Terra Draw
-	const { draw } = useTerraDraw(
-		new TerraDrawLeafletAdapter({
-			lib,
-			map,
-		}),
-	);
+		// Create Terra Draw
+		const { state: drawState } = useTerraDraw(
+			new TerraDrawLeafletAdapter({
+				lib,
+				map,
+			}),
+		);
 
-	// Get features
-	const features = computed(() => {
-		return draw.getSnapshot();
-	});
+		state.value.features = drawState.value.features;
+	};
 
 	return {
 		state,
-		features,
+		init,
 	};
 }
