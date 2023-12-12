@@ -123,7 +123,7 @@ const isActive = (map) => {
       </div>
 
       <div class="adapter" v-show="isActive('mapbox')">
-        <!-- <terra-mapbox v-if="isActive('mapbox')" /> -->
+        <terra-mapbox />
       </div>
       <!-- <terra-arcgis /> -->
     </div>
