@@ -7,7 +7,6 @@ const props = defineProps({
 		default: "",
 	},
 	features: {
-		type: Array,
 		default: [],
 	},
 	activeMode: {
@@ -16,11 +15,25 @@ const props = defineProps({
 	},
 });
 
-defineEmits(["update:activeMode"]);
+// watch(props, (props) => {
+// 	console.debug(props);
 
-onMounted(() => {
-	console.log("TerraMapMenu.vue: onMounted()");
-});
+// 	debugger;
+// });
+
+// onMounted(() => {
+// 	console.debug(props.features);
+
+// 	debugger;
+
+setInterval(() => {
+	if (props.features.length) {
+		console.debug(props.features);
+
+		debugger;
+	}
+}, 1000);
+// });
 </script>
 
 <template>

@@ -2,7 +2,13 @@
 onMounted(() => {
 	const { features } = useTerraLeaflet("leaflet-map");
 
-	console.debug(features.value);
+	setInterval(() => {
+		if (features.value.length) {
+			console.debug(features.value);
+
+			debugger;
+		}
+	}, 1000);
 });
 </script>
 
