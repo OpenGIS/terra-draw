@@ -108,21 +108,21 @@ const isActive = (map) => {
 
     <!-- START Maps -->
     <div class="adapters">
-      <div class="adapter">
-        <terra-leaflet v-if="isActive('leaflet')" />
+      <div class="adapter" v-show="isActive('leaflet')">
+        <terra-leaflet />
       </div>
 
-      <div class="adapter">
-        <terra-maplibre v-if="isActive('maplibre')" />
+      <div class="adapter" v-show="isActive('maplibre')">
+        <terra-maplibre />
       </div>
 
       <!-- <terra-openlayers v-if="isActive('openlayers')" /> -->
 
-      <div class="adapter">
+      <div class="adapter" v-show="isActive('google')">
         <!-- <terra-google v-if="isActive('google')" /> -->
       </div>
 
-      <div class="adapter">
+      <div class="adapter" v-show="isActive('mapbox')">
         <!-- <terra-mapbox v-if="isActive('mapbox')" /> -->
       </div>
       <!-- <terra-arcgis /> -->
@@ -197,6 +197,7 @@ body {
       height: 100%;
 
       .adapter {
+        flex: 1;
         position: relative;
         width: 100%;
         border-right: 1px solid #333;

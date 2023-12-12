@@ -21,6 +21,11 @@ export function useTerraLeaflet(id = "map") {
 		// Remove zoom
 		map.removeControl(map.zoomControl);
 
+		// Invalidate size on resize
+		map.on("resize", () => {
+			map.invalidateSize();
+		});
+
 		// OSM Tiles
 		lib
 			.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
