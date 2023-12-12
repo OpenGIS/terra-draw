@@ -2,9 +2,7 @@
 onMounted(() => {
 	const { features } = useTerraLeaflet("leaflet-map");
 
-	watch(features, () => {
-		console.debug("features", features.value);
-	});
+	console.debug(features.value);
 });
 </script>
 

@@ -1,5 +1,5 @@
 <script setup>
-const { getModes } = useTerraDraw();
+const { getModes } = useTerraModes();
 const { changeMode } = useTerraStore();
 const { activeMode } = storeToRefs(useTerraStore());
 
@@ -119,11 +119,11 @@ const isActive = (map) => {
       <!-- <terra-openlayers v-if="isActive('openlayers')" /> -->
 
       <div class="adapter">
-        <terra-google v-if="isActive('google')" />
+        <!-- <terra-google v-if="isActive('google')" /> -->
       </div>
 
       <div class="adapter">
-        <terra-mapbox v-if="isActive('mapbox')" />
+        <!-- <terra-mapbox v-if="isActive('mapbox')" /> -->
       </div>
       <!-- <terra-arcgis /> -->
     </div>

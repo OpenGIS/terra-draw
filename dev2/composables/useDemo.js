@@ -3,7 +3,7 @@ export function useDemo() {
 
 	//Loads Features
 	(async () => {
-		await fetch("/data/route-map.geojson")
+		await fetch("/data/stonehenge.geojson")
 			.then((res) => res.json())
 			.then((data) => {
 				//Iterate over each feature

@@ -27,17 +27,14 @@ export function useTerraLeaflet(id = "map") {
 			.addTo(map);
 
 		// Create Terra Draw
-		const { init, state: drawState } = useTerraDraw();
-
-		// Create Adapter
-		init(
+		const { state: drawState } = useTerraDraw(
 			new TerraDrawLeafletAdapter({
 				lib,
 				map,
 			}),
 		);
 
-		state.value = drawState.value;
+		state.value.features = drawState.value.features;
 	})();
 
 	// Get features
