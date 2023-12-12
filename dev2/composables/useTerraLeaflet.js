@@ -22,9 +22,9 @@ export function useTerraLeaflet(id = "map") {
 		map.removeControl(map.zoomControl);
 
 		// Invalidate size on resize
-		map.on("resize", () => {
+		new ResizeObserver(() => {
 			map.invalidateSize();
-		});
+		}).observe(map.getContainer());
 
 		// OSM Tiles
 		lib

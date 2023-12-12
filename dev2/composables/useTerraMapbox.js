@@ -5,7 +5,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 export function useTerraMapbox(id = "map") {
 	// Get .env variables
 	const config = useRuntimeConfig();
-	const apiKey = config.public.MAPBOX_ACCESS_TOKEN;
 
 	const { lng, lat, zoom } = storeToRefs(useTerraStore());
 
@@ -15,9 +14,9 @@ export function useTerraMapbox(id = "map") {
 
 	onMounted(() => {
 		// Create Map
-		lib.accessToken = apiKey;
+		lib.accessToken = config.public.MAPBOX_ACCESS_TOKEN;
 		const map = new lib.Map({
-			container: "mapbox-map",
+			container: id,
 			style: {
 				version: 8,
 				sources: {
@@ -40,6 +39,11 @@ export function useTerraMapbox(id = "map") {
 			center: [lng.value, lat.value],
 			zoom: zoom.value,
 		});
+
+		// On resize
+		new ResizeObserver(() => {
+			map.resize();
+		}).observe(map.getContainer());
 
 		// Create Terra Draw
 		const { features } = useTerraDraw(
