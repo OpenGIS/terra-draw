@@ -1,14 +1,8 @@
 <script setup>
-const { state, init } = useTerraLeaflet("leaflet-map");
-
-onMounted(() => {
-	init();
-});
+const { state } = useTerraLeaflet("leaflet-map");
 </script>
 
 <template>
-	{{ JSON.stringify(state.features) }}
-
 	<terra-map-menu
 		v-show="state.features.length"
 		title="Leaflet"

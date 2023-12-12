@@ -9,7 +9,9 @@ export function useTerraLeaflet(id = "map") {
 		features: [],
 	});
 
-	const init = () => {
+	onMounted(() => {
+		console.debug("useTerraLeaflet: Mounted");
+
 		// Create Map
 		const map = lib.map(id, {
 			center: [lat.value, lng.value],
@@ -27,18 +29,17 @@ export function useTerraLeaflet(id = "map") {
 			.addTo(map);
 
 		// Create Terra Draw
-		const { state: drawState } = useTerraDraw(
+		const { features } = useTerraDraw(
 			new TerraDrawLeafletAdapter({
 				lib,
 				map,
 			}),
 		);
 
-		state.value.features = drawState.value.features;
-	};
+		state.value.features = ref(features);
+	});
 
 	return {
 		state,
-		init,
 	};
 }
