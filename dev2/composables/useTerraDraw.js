@@ -159,8 +159,6 @@ export function useTerraDraw() {
 		// Watch for Feature changes
 		watch(sharedFeatures, () => {
 			if (sharedFeatures.value.length > 0) {
-				console.log(sharedFeatures.value);
-
 				//Add Features
 				draw.value.addFeatures(sharedFeatures.value);
 			}

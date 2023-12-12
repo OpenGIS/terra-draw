@@ -59,10 +59,8 @@ const features = computed(() => {
 </script>
 
 <template>
-	<div class="wrap">
-		<terra-map-menu title="Mapbox" :features="features" />
-		<div class="map" id="mapbox-map"></div>
-	</div>
+	<terra-map-menu title="Mapbox" :features="features" />
+	<div class="map" id="mapbox-map"></div>
 </template>
 
 <style></style>

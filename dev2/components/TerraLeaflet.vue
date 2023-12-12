@@ -1,15 +1,17 @@
 <script setup>
 onMounted(() => {
-	const { init, features } = useTerraLeaflet("leaflet-map");
+	const { features } = useTerraLeaflet("leaflet-map");
+
+	watch(features, () => {
+		console.debug("features", features.value);
+	});
 });
 </script>
 
 <template>
-	<div class="wrap">
-		<terra-map-menu title="Leaflet" :features="features" />
+	<terra-map-menu title="Leaflet" :features="features" />
 
-		<div class="map" id="leaflet-map"></div>
-	</div>
+	<div class="map" id="leaflet-map"></div>
 </template>
 
 <style>

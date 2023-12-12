@@ -13,7 +13,11 @@ export default defineNuxtConfig({
 		},
 	},
 
-	css: ["leaflet/dist/leaflet.css", "maplibre-gl/dist/maplibre-gl.css"],
+	css: [
+		"~/assets/main.less",
+		"leaflet/dist/leaflet.css",
+		"maplibre-gl/dist/maplibre-gl.css",
+	],
 
 	imports: {
 		dirs: ["stores"],

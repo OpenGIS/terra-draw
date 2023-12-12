@@ -9,6 +9,7 @@ export function useTerraLeaflet(id = "map") {
 		features: [],
 	});
 
+	//Immediately...
 	(() => {
 		// Create Map
 		const map = lib.map(id, {

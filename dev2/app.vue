@@ -107,92 +107,27 @@ const isActive = (map) => {
     <!-- END Nav -->
 
     <!-- START Maps -->
-    <div class="maps">
-      <terra-leaflet v-if="isActive('leaflet')" />
+    <div class="adapters">
+      <div class="adapter">
+        <terra-leaflet v-if="isActive('leaflet')" />
+      </div>
 
-      <terra-maplibre v-if="isActive('maplibre')" />
+      <div class="adapter">
+        <!-- <terra-maplibre v-if="isActive('maplibre')" /> -->
+      </div>
 
-      <terra-openlayers v-if="isActive('openlayers')" />
+      <!-- <terra-openlayers v-if="isActive('openlayers')" /> -->
 
-      <terra-google v-if="isActive('google')" />
+      <div class="adapter">
+        <terra-google v-if="isActive('google')" />
+      </div>
 
-      <terra-mapbox v-if="isActive('mapbox')" />
-
+      <div class="adapter">
+        <terra-mapbox v-if="isActive('mapbox')" />
+      </div>
       <!-- <terra-arcgis /> -->
     </div>
     <!-- END Maps  -->
   </div>
   <!-- END App -->
 </template>
-
-<style lang="less">
-body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: "Roboto", sans-serif;
-  font-size: 14px;
-  color: #f9f9f9;
-  background-color: #333;
-
-  #app {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-
-    .nav {
-      padding: 10px;
-      height: 30px;
-      display: flex;
-
-      .nav-item {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        div {
-          margin-right: 5px;
-          padding: 10px;
-          border-radius: 5px;
-          border: 1px solid #333;
-          cursor: pointer;
-          background-color: #333;
-          color: #f9f9f9;
-
-          &.mode-select {
-            position: absolute;
-            right: 10px;
-            padding: 7px;
-            font-weight: bold;
-
-            select {
-              margin-left: 5px;
-            }
-          }
-
-          &.mode-select,
-          &.active {
-            background-color: #f9f9f9;
-            color: #333;
-          }
-        }
-      }
-    }
-
-    .maps {
-      display: flex;
-      flex-direction: row;
-      width: 100%;
-      height: inherit;
-      .map {
-        width: 100%;
-        height: inherit;
-      }
-    }
-  }
-}
-</style>
