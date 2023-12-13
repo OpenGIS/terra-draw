@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Terra Draw | MapLibre Starter</title>
+
+		<!-- Required Styles & Script -->
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css"
+		/>
+		<script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+		<script src="https://unpkg.com/terra-draw@0.0.1-alpha.50/dist/terra-draw.umd.js"></script>
+
+		<!-- Example Map is fullscreen -->
+		<style>
+			html,
+			body,
+			#map {
+				margin: 0;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Map Container (must have dimensions set!) -->
+		<div id="map"></div>
+
+		<script>
+			const lng = -4.49049;
+			const lat = 54.189649;
+			const zoom = 5;
+
+			// Create MapLibre Map, targetting <div id="map">
+			// See https://maplibre.org/maplibre-gl-js/docs/
+			var map = new maplibregl.Map({
+				container: "map",
+				style: "https://demotiles.maplibre.org/style.json",
+				center: [lng, lat],
+				zoom: zoom,
+			});
+
+			// Create Terra Draw
+			const draw = new terraDraw.TerraDraw({
+				adapter: new terraDraw.TerraDrawMapLibreGLAdapter({
+					map: map,
+					lib: maplibregl,
+				}),
+				modes: [
+					new terraDraw.TerraDrawFreehandMode(),
+					new terraDraw.TerraDrawLineStringMode(),
+					new terraDraw.TerraDrawCircleMode(),
+					new terraDraw.TerraDrawGreatCircleMode(),
+					new terraDraw.TerraDrawPointMode(),
+					new terraDraw.TerraDrawPolygonMode(),
+					new terraDraw.TerraDrawRectangleMode(),
+				],
+			});
+
+			// Start drawing
+			draw.start();
+
+			// Set the mode to rectangle
+			draw.setMode("freehand");
+		</script>
+
+		<!-- Examples UI -->
+		<script src="./assets/examples.js"></script>
+		<script>
+			examplesUI(draw);
+		</script>
+	</body>
+</html>

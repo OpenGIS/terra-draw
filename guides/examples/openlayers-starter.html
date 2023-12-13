@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Terra Draw | MapLibre Starter</title>
+
+		<!-- Required Styles & Script -->
+		<script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css"
+		/>
+
+		<!-- 		<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/css/ol.css"
+		/> -->
+
+		<script src="https://unpkg.com/terra-draw@0.0.1-alpha.50/dist/terra-draw.umd.js"></script>
+
+		<!-- Example Map is fullscreen -->
+		<style>
+			html,
+			body,
+			#map {
+				margin: 0;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body onload="init()">
+		<!-- Map Container (must have dimensions set!) -->
+		<div id="map"></div>
+
+		<script>
+			function init() {
+				const lng = -4.49049;
+				const lat = 54.189649;
+				const zoom = 5;
+
+				// Create OpenLayers Map, targetting <div id="map">
+				var map = new ol.Map({
+					view: new ol.View({
+						center: [lng, lat],
+						zoom: zoom,
+					}),
+					layers: [
+						new ol.layer.Tile({
+							source: new ol.source.OSM(),
+						}),
+					],
+					target: "map",
+				});
+
+				map.once("postrender", function () {
+					// Create Terra Draw
+					const draw = new terraDraw.TerraDraw({
+						adapter: new terraDraw.TerraDrawOpenLayersAdapter({
+							map: map,
+							lib: {
+								Circle: ol.geom.Circle,
+								Feature: ol.Feature,
+								GeoJSON: ol.format.GeoJSON,
+								Style: ol.style.Style,
+								VectorLayer: ol.layer.Vector,
+								VectorSource: ol.source.Vector,
+								Stroke: ol.style.Stroke,
+								toLonLat: ol.proj.toLonLat,
+								CircleStyle: ol.style.CircleStyle,
+							},
+						}),
+						modes: [
+							new terraDraw.TerraDrawFreehandMode(),
+							new terraDraw.TerraDrawLineStringMode(),
+							new terraDraw.TerraDrawCircleMode(),
+							new terraDraw.TerraDrawGreatCircleMode(),
+							new terraDraw.TerraDrawPointMode(),
+							new terraDraw.TerraDrawPolygonMode(),
+							new terraDraw.TerraDrawRectangleMode(),
+						],
+					});
+
+					// Start drawing
+					draw.start();
+
+					// Set the mode to rectangle
+					draw.setMode("polygon");
+
+					// Examples UI
+					examplesUI(draw);
+				});
+			}
+		</script>
+
+		<!-- Examples UI -->
+		<script src="./assets/examples.js"></script>
+	</body>
+</html>
