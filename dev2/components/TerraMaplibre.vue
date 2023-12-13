@@ -4,9 +4,9 @@ const { state } = useTerraMaplibre("maplibre-map");
 
 <template>
 	<terra-map-menu
-		v-show="state.features.length"
+		v-show="typeof state.draw !== 'undefined'"
 		title="MapLibre"
-		:features="state.features"
+		:draw="state.draw"
 	/>
 
 	<div class="map" id="maplibre-map"></div>

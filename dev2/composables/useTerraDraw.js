@@ -28,9 +28,11 @@ export function useTerraDraw(adapter = null) {
 	});
 
 	// Once Features are loaded (async
-	watch(sharedFeatures, (now, prev) => {
-		if (sharedFeatures.value.length > 0) {
+	watchEffect(() => {
+		if (!state.value.status && sharedFeatures.value.length) {
 			draw.value.addFeatures(sharedFeatures.value);
+
+			state.value.status = "populated";
 		}
 	});
 

@@ -4,9 +4,9 @@ const { state } = useTerraMapbox("mapbox-map");
 
 <template>
 	<terra-map-menu
-		v-show="state.features.length"
+		v-show="typeof state.draw !== 'undefined'"
 		title="Mapbox"
-		:features="state.features"
+		:draw="state.draw"
 	/>
 
 	<div class="map" id="mapbox-map"></div>

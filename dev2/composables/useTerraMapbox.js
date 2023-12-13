@@ -9,7 +9,7 @@ export function useTerraMapbox(id = "map") {
 	const { lng, lat, zoom } = storeToRefs(useTerraStore());
 
 	const state = ref({
-		features: [],
+		draw: null,
 	});
 
 	onMounted(() => {
@@ -46,14 +46,14 @@ export function useTerraMapbox(id = "map") {
 		}).observe(map.getContainer());
 
 		// Create Terra Draw
-		const { features } = useTerraDraw(
+		const { draw } = useTerraDraw(
 			new TerraDrawMapboxGLAdapter({
 				lib,
 				map,
 			}),
 		);
 
-		state.value.features = ref(features);
+		state.value.draw = ref(draw);
 	});
 
 	return {

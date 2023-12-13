@@ -9,7 +9,7 @@ export function useTerraGoogle(id = "map") {
 	const { lng, lat, zoom } = storeToRefs(useTerraStore());
 
 	const state = ref({
-		features: [],
+		draw: null,
 	});
 
 	onMounted(() => {
@@ -31,14 +31,14 @@ export function useTerraGoogle(id = "map") {
 			// Once Map loaded
 			map.addListener("projection_changed", () => {
 				// Create Terra Draw
-				const { features } = useTerraDraw(
+				const { draw } = useTerraDraw(
 					new TerraDrawGoogleMapsAdapter({
 						lib: google.maps,
 						map,
 					}),
 				);
 
-				state.value.features = ref(features);
+				state.value.draw = ref(draw);
 			});
 		});
 	});
