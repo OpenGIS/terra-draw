@@ -55,7 +55,7 @@ const count = computed(() => {
 	top: 0;
 	left: 0;
 	width: 96%;
-	padding: 2%;
+	padding: 55px 2% 2% 2%;
 	z-index: 1000;
 	background-color: rgba(0, 0, 0, 0.5);
 

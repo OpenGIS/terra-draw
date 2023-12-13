@@ -7,13 +7,7 @@ const state = reactive(
   new Map([
     [
       "activeMaps",
-      new Set([
-        "leaflet",
-        "maplibre",
-        // "openlayers",
-        "google",
-        "mapbox",
-      ]),
+      new Set(["leaflet", "maplibre", "openlayers", "google", "mapbox"]),
     ],
   ]),
 );
@@ -32,177 +26,176 @@ const isActive = (map) => {
 </script>
 
 <template>
-  <!-- START App -->
-  <div id="app">
-    <!-- START Nav -->
-    <div class="nav">
-      <div class="nav-item">
-        <div>
-          <img src="/img/icon.png" alt="Terra Logo" height="30px" />
-        </div>
-      </div>
-
-      <div class="nav-item map-toggle">
-        <!-- Leaflet -->
-        <div
-          class="toggle-leaflet"
-          :class="{ active: isActive('leaflet') }"
-          @click="toggleMap('leaflet')"
-        >
-          Leaflet
-        </div>
-
-        <!-- MapLibre -->
-        <div
-          class="toggle-maplibre"
-          :class="{ active: isActive('maplibre') }"
-          @click="toggleMap('maplibre')"
-        >
-          MapLibre
-        </div>
-
-        <!-- OpenLayers -->
-        <!--        <div
-          class="toggle-openlayers"
-          :class="{ active: isActive('openlayers') }"
-          @click="toggleMap('openlayers')"
-        >
-          OpenLayers
-        </div> -->
-
-        <!-- Google Maps -->
-        <div
-          class="toggle-google"
-          :class="{ active: isActive('google') }"
-          @click="toggleMap('google')"
-        >
-          Google Maps
-        </div>
-
-        <!-- Mapbox -->
-        <div
-          class="toggle-mapbox"
-          :class="{ active: isActive('mapbox') }"
-          @click="toggleMap('mapbox')"
-        >
-          Mapbox
-        </div>
-
-        <div class="nav-item">
-          <div class="mode-select">
-            Mode
-            <select @change="changeMode($event.target.value)">
-              <option
-                v-for="(mode, index) in getModes()"
-                :key="index"
-                :value="mode.mode"
-                :selected="mode.mode === activeMode"
-                :text="mode.mode.toUpperCase()"
-              />
-            </select>
-          </div>
-        </div>
+  <!-- START Nav -->
+  <div class="nav">
+    <div class="nav-item terra-icon">
+      <div>
+        <img src="/img/icon.png" class="rounded" alt="Terra Draw" />
       </div>
     </div>
-    <!-- END Nav -->
 
-    <!-- START Maps -->
-    <div class="adapters">
-      <div class="adapter" v-show="isActive('leaflet')">
-        <terra-leaflet />
+    <div class="nav-item map-toggle">
+      <!-- Leaflet -->
+      <div
+        class="toggle-leaflet rounded"
+        :class="{ active: isActive('leaflet') }"
+        @click="toggleMap('leaflet')"
+      >
+        Leaflet
       </div>
 
-      <div class="adapter" v-show="isActive('maplibre')">
-        <terra-maplibre />
+      <!-- MapLibre -->
+      <div
+        class="toggle-maplibre rounded"
+        :class="{ active: isActive('maplibre') }"
+        @click="toggleMap('maplibre')"
+      >
+        MapLibre
       </div>
 
-      <!-- <terra-openlayers v-if="isActive('openlayers')" /> -->
-
-      <div class="adapter" v-show="isActive('google')">
-        <terra-google />
+      <!-- OpenLayers -->
+      <div
+        class="toggle-openlayers rounded"
+        :class="{ active: isActive('openlayers') }"
+        @click="toggleMap('openlayers')"
+      >
+        OpenLayers
       </div>
 
-      <div class="adapter" v-show="isActive('mapbox')">
-        <terra-mapbox />
+      <!-- Google Maps -->
+      <div
+        class="toggle-google rounded"
+        :class="{ active: isActive('google') }"
+        @click="toggleMap('google')"
+      >
+        Google Maps
       </div>
-      <!-- <terra-arcgis /> -->
+
+      <!-- Mapbox -->
+      <div
+        class="toggle-mapbox rounded"
+        :class="{ active: isActive('mapbox') }"
+        @click="toggleMap('mapbox')"
+      >
+        Mapbox
+      </div>
     </div>
-    <!-- END Maps  -->
+
+    <div class="nav-item mode-select rounded">
+      Mode
+      <select @change="changeMode($event.target.value)">
+        <option
+          v-for="(mode, index) in getModes()"
+          :key="index"
+          :value="mode.mode"
+          :selected="mode.mode === activeMode"
+          :text="mode.mode.toUpperCase()"
+        />
+      </select>
+    </div>
   </div>
-  <!-- END App -->
+  <!-- END Nav -->
+
+  <!-- START Maps -->
+  <div class="adapters">
+    <div class="adapter" v-show="isActive('leaflet')">
+      <terra-leaflet />
+    </div>
+
+    <div class="adapter" v-show="isActive('maplibre')">
+      <terra-maplibre />
+    </div>
+
+    <div class="adapter" v-show="isActive('openlayers')">
+      <terra-openlayers />
+    </div>
+
+    <div class="adapter" v-show="isActive('google')">
+      <terra-google />
+    </div>
+
+    <div class="adapter" v-show="isActive('mapbox')">
+      <terra-mapbox />
+    </div>
+    <!-- <terra-arcgis /> -->
+  </div>
+  <!-- END Maps  -->
 </template>
 
 <style lang="less">
-body {
+#app {
   width: 100%;
   height: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: "Roboto", sans-serif;
-  font-size: 14px;
-  color: #f9f9f9;
-  background-color: #333;
 
-  #app {
+  .nav {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    overflow: hidden;
+    padding: 10px;
+    height: 30px;
+    display: flex;
+    z-index: 1001;
+    background-color: #333;
 
-    .nav {
-      padding: 10px;
-      height: 30px;
+    .nav-item {
       display: flex;
+      align-items: center;
 
-      .nav-item {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      &.terra-icon {
+        margin-right: 10px;
 
+        img {
+          width: 40px;
+          height: 40px;
+          border: 1px solid #999;
+        }
+      }
+
+      &.map-toggle {
         div {
-          margin-right: 5px;
+          margin-left: 5px;
           padding: 10px;
-          border-radius: 5px;
-          border: 1px solid #333;
-          cursor: pointer;
-          background-color: #333;
           color: #f9f9f9;
-
-          &.mode-select {
-            position: absolute;
-            right: 10px;
-            padding: 7px;
-            font-weight: bold;
-
-            select {
-              margin-left: 5px;
-            }
-          }
-
-          &.mode-select,
+          cursor: pointer;
           &.active {
             background-color: #f9f9f9;
             color: #333;
           }
         }
       }
-    }
 
-    .adapters {
-      display: flex;
-      flex-direction: row;
-      width: 100%;
-      height: 100%;
+      &.mode-select {
+        position: absolute;
+        right: 20px;
+        padding: 7px;
+        font-weight: bold;
+        background-color: #f9f9f9;
+        color: #333;
 
-      .adapter {
-        flex: 1;
-        position: relative;
-        width: 100%;
-        border-right: 1px solid #333;
-        .map {
+        select {
+          margin-left: 5px;
         }
+      }
+    }
+  }
+
+  .adapters {
+    display: flex;
+    flex-direction: row;
+    width: inherit;
+    height: inherit;
+    border: 1px solid red;
+
+    .adapter {
+      flex: 1;
+      position: relative;
+      width: inherit;
+      height: inherit;
+      border-right: 1px solid #333;
+      .map {
+        width: inherit;
+        height: inherit;
       }
     }
   }
