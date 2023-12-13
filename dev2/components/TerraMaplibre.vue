@@ -11,10 +11,3 @@ const { state } = useTerraMaplibre("maplibre-map");
 
 	<div class="map" id="maplibre-map"></div>
 </template>
-
-<style>
-#maplibre-map {
-	width: 100%;
-	height: 100%;
-}
-</style>

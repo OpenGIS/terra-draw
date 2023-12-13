@@ -1,13 +1,13 @@
 <script setup>
-const { state } = useTerraMapbox("mapbox-map");
+const { state } = useTerraEsri("esri-map");
 </script>
 
 <template>
 	<terra-map-menu
 		v-show="typeof state.draw !== 'undefined'"
-		title="Mapbox"
+		title="Leaflet"
 		:draw="state.draw"
 	/>
 
-	<div class="map" id="mapbox-map"></div>
+	<div class="map" id="esri-map"></div>
 </template>
