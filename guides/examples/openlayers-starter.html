@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<title>Terra Draw | MapLibre Starter</title>
+		<title>Terra Draw | OpenLayers Starter</title>
 
 		<!-- Required Styles & Script -->
 		<script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
@@ -36,12 +36,12 @@
 			function init() {
 				const lng = -4.49049;
 				const lat = 54.189649;
-				const zoom = 5;
+				const zoom = 6;
 
 				// Create OpenLayers Map, targetting <div id="map">
 				var map = new ol.Map({
 					view: new ol.View({
-						center: [lng, lat],
+						center: new ol.proj.fromLonLat([lng, lat]),
 						zoom: zoom,
 					}),
 					layers: [

@@ -34,7 +34,25 @@
 			// See https://maplibre.org/maplibre-gl-js/docs/
 			var map = new maplibregl.Map({
 				container: "map",
-				style: "https://demotiles.maplibre.org/style.json",
+				style: {
+					version: 8,
+					sources: {
+						"osm-tiles": {
+							type: "raster",
+							tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+							tileSize: 256,
+							attribution:
+								'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+						},
+					},
+					layers: [
+						{
+							id: "osm-tiles",
+							type: "raster",
+							source: "osm-tiles",
+						},
+					],
+				},
 				center: [lng, lat],
 				zoom: zoom,
 			});
@@ -53,14 +71,33 @@
 					new terraDraw.TerraDrawPointMode(),
 					new terraDraw.TerraDrawPolygonMode(),
 					new terraDraw.TerraDrawRectangleMode(),
+					new terraDraw.TerraDrawRenderMode({
+						modeName: "render",
+					}),
 				],
 			});
 
 			// Start drawing
 			draw.start();
 
+			// Add a Point to the Store
+			draw.addFeatures([
+				{
+					type: "Feature",
+					geometry: {
+						type: "Point",
+						coordinates: [-1.825859, 51.178867],
+					},
+					properties: {
+						mode: "render",
+					},
+				},
+			]);
+
 			// Set the mode to rectangle
 			draw.setMode("freehand");
+
+			console.debug(draw.getSnapshot());
 		</script>
 
 		<!-- Examples UI -->
