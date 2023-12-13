@@ -7,6 +7,7 @@ export function useTerraLeaflet(id = "map") {
 
 	const state = ref({
 		features: [],
+		draw: null,
 	});
 
 	onMounted(() => {
@@ -35,7 +36,7 @@ export function useTerraLeaflet(id = "map") {
 			.addTo(map);
 
 		// Create Terra Draw
-		const { features } = useTerraDraw(
+		const { features, draw } = useTerraDraw(
 			new TerraDrawLeafletAdapter({
 				lib,
 				map,
@@ -43,6 +44,7 @@ export function useTerraLeaflet(id = "map") {
 		);
 
 		state.value.features = ref(features);
+		state.value.draw = draw;
 	});
 
 	return {

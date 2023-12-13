@@ -6,6 +6,7 @@ const { state } = useTerraLeaflet("leaflet-map");
 	<terra-map-menu
 		v-show="state.features.length"
 		title="Leaflet"
+		:draw="state.draw"
 		:features="state.features"
 	/>
 

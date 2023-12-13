@@ -13,6 +13,9 @@ const props = defineProps({
 		type: String,
 		default: "select",
 	},
+	draw: {
+		type: Object,
+	},
 });
 
 const count = computed(() => {
@@ -29,7 +32,10 @@ const count = computed(() => {
 
 <template>
 	<div class="map-menu">
-		<div class="title">{{ title }} - {{ count.total }} Features</div>
+		<div class="title">
+			{{ title }} - {{ count.total }} Features
+			<button @click="draw.clear()">Clear</button>
+		</div>
 		{{ count.points }} Points, {{ count.lines }} Lines,
 		{{ count.polygons }} Polygons
 
