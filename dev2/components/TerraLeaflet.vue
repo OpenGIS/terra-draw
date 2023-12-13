@@ -4,10 +4,9 @@ const { state } = useTerraLeaflet("leaflet-map");
 
 <template>
 	<terra-map-menu
-		v-show="state.features.length"
+		v-show="typeof state.draw !== 'undefined'"
 		title="Leaflet"
 		:draw="state.draw"
-		:features="state.features"
 	/>
 
 	<div class="map" id="leaflet-map"></div>

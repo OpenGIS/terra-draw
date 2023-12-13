@@ -6,7 +6,6 @@ export function useTerraLeaflet(id = "map") {
 	const { lng, lat, zoom } = storeToRefs(useTerraStore());
 
 	const state = ref({
-		features: [],
 		draw: null,
 	});
 
@@ -36,15 +35,14 @@ export function useTerraLeaflet(id = "map") {
 			.addTo(map);
 
 		// Create Terra Draw
-		const { features, draw } = useTerraDraw(
+		const { draw } = useTerraDraw(
 			new TerraDrawLeafletAdapter({
 				lib,
 				map,
 			}),
 		);
 
-		state.value.features = ref(features);
-		state.value.draw = draw;
+		state.value.draw = ref(draw);
 	});
 
 	return {

@@ -340,6 +340,8 @@ export abstract class TerraDrawBaseAdapter {
 				callback: (event: KeyboardEvent) => {
 					// map has no keypress event, so we add one to the canvas itself
 
+					console.debug("keyup", event);
+
 					if (!this._currentModeCallbacks) return;
 
 					this._heldKeys.delete(event.key);

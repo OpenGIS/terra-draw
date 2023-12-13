@@ -6,9 +6,6 @@ const props = defineProps({
 		type: String,
 		default: "",
 	},
-	features: {
-		default: [],
-	},
 	activeMode: {
 		type: String,
 		default: "select",
@@ -18,13 +15,17 @@ const props = defineProps({
 	},
 });
 
+const features = computed(() => {
+	return props.draw ? props.draw.getSnapshot() : [];
+});
+
 const count = computed(() => {
 	return {
-		total: props.features.length,
-		points: props.features.filter((f) => f.geometry.type === "Point").length,
-		lines: props.features.filter((f) => f.geometry.type === "LineString")
+		total: features.value.length,
+		points: features.value.filter((f) => f.geometry.type === "Point").length,
+		lines: features.value.filter((f) => f.geometry.type === "LineString")
 			.length,
-		polygons: props.features.filter((f) => f.geometry.type === "Polygon")
+		polygons: features.value.filter((f) => f.geometry.type === "Polygon")
 			.length,
 	};
 });
@@ -34,10 +35,13 @@ const count = computed(() => {
 	<div class="map-menu">
 		<div class="title">
 			{{ title }} - {{ count.total }} Features
-			<button @click="draw.clear()">Clear</button>
+			<button v-if="count.total" @click="draw.clear()">Clear</button>
 		</div>
-		{{ count.points }} Points, {{ count.lines }} Lines,
-		{{ count.polygons }} Polygons
+
+		<div v-if="count.total">
+			{{ count.points }} Points, {{ count.lines }} Lines,
+			{{ count.polygons }} Polygons
+		</div>
 
 		<textarea v-show="features.length" class="features" readonly>{{
 			JSON.stringify(features)

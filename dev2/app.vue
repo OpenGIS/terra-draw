@@ -113,17 +113,17 @@ const isActive = (map) => {
       </div>
 
       <div class="adapter" v-show="isActive('maplibre')">
-        <terra-maplibre />
+        <!-- <terra-maplibre /> -->
       </div>
 
       <!-- <terra-openlayers v-if="isActive('openlayers')" /> -->
 
       <div class="adapter" v-show="isActive('google')">
-        <terra-google />
+        <!-- <terra-google /> -->
       </div>
 
       <div class="adapter" v-show="isActive('mapbox')">
-        <terra-mapbox />
+        <!-- <terra-mapbox /> -->
       </div>
       <!-- <terra-arcgis /> -->
     </div>
