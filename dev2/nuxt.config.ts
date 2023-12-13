@@ -33,6 +33,7 @@ export default defineNuxtConfig({
 					"TerraDraw",
 
 					//Adapters
+					"TerraDrawArcGISMapsSDKAdapter",
 					"TerraDrawMapLibreGLAdapter",
 					"TerraDrawOpenLayersAdapter",
 					"TerraDrawMapboxGLAdapter",

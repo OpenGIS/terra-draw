@@ -7,7 +7,14 @@ const state = reactive(
   new Map([
     [
       "activeMaps",
-      new Set(["leaflet", "maplibre", "openlayers", "google", "mapbox"]),
+      new Set([
+        "leaflet",
+        "maplibre",
+        "openlayers",
+        "google",
+        "mapbox",
+        "arcgis",
+      ]),
     ],
   ]),
 );
@@ -79,6 +86,15 @@ const isActive = (map) => {
       >
         Mapbox
       </div>
+
+      <!-- ArcGIS -->
+      <!--       <div
+        class="toggle-arcgis rounded"
+        :class="{ active: isActive('arcgis') }"
+        @click="toggleMap('arcgis')"
+      >
+        ArcGIS
+      </div> -->
     </div>
 
     <div class="nav-item mode-select rounded">
@@ -117,7 +133,9 @@ const isActive = (map) => {
     <div class="adapter" v-show="isActive('mapbox')">
       <terra-mapbox />
     </div>
-    <!-- <terra-arcgis /> -->
+    <!--     <div class="adapter" v-show="isActive('arcgis')">
+      <terra-esri />
+    </div> -->
   </div>
   <!-- END Maps  -->
 </template>

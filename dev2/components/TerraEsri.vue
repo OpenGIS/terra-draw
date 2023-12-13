@@ -5,7 +5,7 @@ const { state } = useTerraEsri("esri-map");
 <template>
 	<terra-map-menu
 		v-show="typeof state.draw !== 'undefined'"
-		title="Leaflet"
+		title="ArcGIS"
 		:draw="state.draw"
 	/>
 

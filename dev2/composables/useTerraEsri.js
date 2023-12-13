@@ -1,8 +1,19 @@
-//Import Leaflet
-import * as lib from "leaflet";
-import "leaflet/dist/leaflet.css";
+// Import ArcGIS
+import Map from "@arcgis/core/Map";
+import MapView from "@arcgis/core/views/MapView.js";
+import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
+import Point from "@arcgis/core/geometry/Point";
+import Polyline from "@arcgis/core/geometry/Polyline";
+import Polygon from "@arcgis/core/geometry/Polygon";
+import Graphic from "@arcgis/core/Graphic";
+import SimpleFillSymbol from "@arcgis/core/symbols/SimpleFillSymbol";
+import SimpleLineSymbol from "@arcgis/core/symbols/SimpleLineSymbol";
+import Color from "@arcgis/core/Color";
+import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 
-export function useTerraLeaflet(id = "map") {
+import "@arcgis/core/assets/esri/themes/light/main.css";
+
+export function useTerraEsri(id = "map") {
 	const { lng, lat, zoom } = storeToRefs(useTerraStore());
 
 	const state = ref({
@@ -11,34 +22,33 @@ export function useTerraLeaflet(id = "map") {
 
 	onMounted(() => {
 		// Create Map
-		const map = lib.map(id, {
-			center: [lat.value, lng.value],
-			// Bump up zoom to match others
-			zoom: zoom.value + 1,
-			maxZoom: 24,
+		const map = new Map({
+			// Basemap layer service
+			basemap: "osm",
 		});
 
-		// Remove zoom
-		map.removeControl(map.zoomControl);
-
-		// Invalidate size on resize
-		new ResizeObserver(() => {
-			map.invalidateSize();
-		}).observe(map.getContainer());
-
-		// OSM Tiles
-		lib
-			.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-				attribution:
-					'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-			})
-			.addTo(map);
+		const view = new MapView({
+			map: map,
+			center: [lng, lat],
+			zoom: zoom,
+			container: id,
+		});
 
 		// Create Terra Draw
 		const { draw } = useTerraDraw(
-			new TerraDrawLeafletAdapter({
-				lib,
-				map,
+			new TerraDrawArcGISMapsSDKAdapter({
+				lib: {
+					GraphicsLayer,
+					Point,
+					Polyline,
+					Polygon,
+					Graphic,
+					SimpleLineSymbol,
+					SimpleFillSymbol,
+					SimpleMarkerSymbol,
+					Color,
+				},
+				map: view,
 			}),
 		);
 
