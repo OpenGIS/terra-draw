@@ -88,43 +88,104 @@ export function useTerraModes() {
 				},
 				styles: {
 					// Point
-					selectedPointColor: "#222222", // Hex color
-					selectedPointWidth: 2, // Integer
-					selectedPointOutlineColor: "#222222", // Hex color
-					selectedPointOutlineWidth: 2, // Integer
+					selectedPointColor: "#008cff", // Hex color
+					selectedPointWidth: 3, // Integer
+					selectedPointOutlineColor: "#232323", // Hex color
+					selectedPointOutlineWidth: 1, // Integer
 
 					// LineString
-					selectedLineStringColor: "#222222", // Hex color
+					selectedLineStringColor: "#fd7047", // Hex color
 					selectedLineStringWidth: 2, // Integer
 
 					// Polygon
-					selectedPolygonColor: "#00FF00", // Hex color
+					selectedPolygonColor: "#fd7047", // Hex color
 					selectedPolygonFillOpacity: 0.7, // 0 - 1
-					selectedPolygonOutlineColor: "#222222", // Hex color
-					selectedPolygonOutlineWidth: 2, // Integer
+					selectedPolygonOutlineColor: "#232323", // Hex color
+					selectedPolygonOutlineWidth: 1, // Integer
 
 					// Selection Points
 					// (of a polygon/linestring feature)
-					selectionPointWidth: 2, // Integer
-					selectionPointColor: "green", // Hex color
-					selectionPointOutlineColor: "pink", // Hex color
-					selectionPointOutlineWidth: 2, // Integer
+					selectionPointWidth: 3, // Integer
+					selectionPointColor: "#fd7047", // Hex color
+					selectionPointOutlineColor: "#232323", // Hex color
+					selectionPointOutlineWidth: 1, // Integer
 
 					// Mid Points
 					//(of a polygon/linestring feature)
-					midPointColor: "red", // Hex color
-					midPointOutlineColor: "blue", // Hex color
-					midPointWidth: 1, // Integer
+					midPointColor: "#008cff", // Hex color
+					midPointOutlineColor: "#232323", // Hex color
+					midPointWidth: 2, // Integer
 					midPointOutlineWidth: 1, // Integer
 				},
 			}),
-			new TerraDrawFreehandMode(),
-			new TerraDrawLineStringMode(),
-			new TerraDrawCircleMode(),
-			new TerraDrawGreatCircleMode(),
-			new TerraDrawPointMode(),
-			new TerraDrawPolygonMode(),
-			new TerraDrawRectangleMode(),
+
+			new TerraDrawFreehandMode({
+				styles: {
+					fillColor: "#00d599",
+					fillOpacity: 0.7,
+					outlineColor: "#232323",
+					outlineWidth: 1,
+					closingPointColor: "#00d599",
+					closingPointWidth: 2,
+					closingPointOutlineColor: "#232323",
+					closingPointOutlineWidth: 1,
+				},
+			}),
+
+			new TerraDrawLineStringMode({
+				styles: {
+					lineStringColor: "#00b9a1",
+					lineStringWidth: 2,
+				},
+			}),
+
+			new TerraDrawCircleMode({
+				styles: {
+					fillColor: "#007f90",
+					fillOpacity: 0.7,
+					outlineColor: "#232323",
+					outlineWidth: 1,
+				},
+			}),
+
+			new TerraDrawGreatCircleMode({
+				styles: {
+					lineStringColor: "#007f90",
+					lineStringWidth: 2,
+					closingPointColor: "#007f90",
+					closingPointWidth: 2,
+					closingPointOutlineColor: "#232323",
+					closingPointOutlineWidth: 1,
+				},
+			}),
+
+			new TerraDrawPointMode({
+				styles: {
+					pointColor: "#fd7047",
+					pointWidth: 3,
+					pointOutlineColor: "#232323",
+					pointOutlineWidth: 1,
+				},
+			}),
+
+			new TerraDrawPolygonMode({
+				styles: {
+					fillColor: "#009c9e",
+					fillOpacity: 0.7,
+					outlineColor: "#232323",
+					outlineWidth: 1,
+				},
+			}),
+
+			new TerraDrawRectangleMode({
+				styles: {
+					fillColor: "#2f4858",
+					fillOpacity: 0.7,
+					outlineColor: "#232323",
+					outlineWidth: 1,
+				},
+			}),
+
 			// new TerraDrawRenderMode({
 			// 	modeName: "render",
 			// }),
