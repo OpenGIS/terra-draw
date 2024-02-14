@@ -5,17 +5,26 @@ import {
 	TerraDrawCallbacks,
 } from "../common";
 import { GeoJsonObject } from "geojson";
-import { TerraDrawBaseAdapter } from "./common/base.adapter";
+import { BaseAdapterConfig, TerraDrawBaseAdapter } from "./common/base.adapter";
+import { FeatureId } from "../store/store";
 
 export class TerraDrawGoogleMapsAdapter extends TerraDrawBaseAdapter {
-	constructor(config: {
-		lib: typeof google.maps;
-		map: google.maps.Map;
-		coordinatePrecision?: number;
-	}) {
+	constructor(
+		config: {
+			lib: typeof google.maps;
+			map: google.maps.Map;
+		} & BaseAdapterConfig,
+	) {
 		super(config);
 		this._lib = config.lib;
 		this._map = config.map;
+
+		// In order for the internals of the adapter to work we require an ID to
+		// allow query selectors  to work
+		if (!this._map.getDiv().id) {
+			throw new Error("Google Map container div requires and id to be set");
+		}
+
 		this._coordinatePrecision =
 			typeof config.coordinatePrecision === "number"
 				? config.coordinatePrecision
@@ -212,13 +221,14 @@ export class TerraDrawGoogleMapsAdapter extends TerraDrawBaseAdapter {
 			// TODO: We could cache these individually per cursor
 
 			const div = this._map.getDiv();
-			const mapSelector = `#${div.id} div[aria-label]`;
-			const map = document.querySelector(mapSelector);
+			const styleDivSelector = `#${div.id} .gm-style > div`;
+			const styleDiv = document.querySelector(styleDivSelector);
 
-			if (map) {
+			if (styleDiv) {
+				styleDiv.classList.add("terra-draw-google-maps");
+
 				const style = document.createElement("style");
-				const selector = `#${div.id} div[aria-label="${map.ariaLabel}"]`;
-				style.innerHTML = `${selector} { cursor: ${cursor} !important; }`;
+				style.innerHTML = `.terra-draw-google-maps { cursor: ${cursor} !important; }`;
 				document.getElementsByTagName("head")[0].appendChild(style);
 				this._cursorStyleSheet = style;
 			}
@@ -247,7 +257,7 @@ export class TerraDrawGoogleMapsAdapter extends TerraDrawBaseAdapter {
 		this._map.setOptions({ draggable: enabled });
 	}
 
-	private renderedFeatureIds: Set<string> = new Set();
+	private renderedFeatureIds: Set<FeatureId> = new Set();
 
 	/**
 	 * Renders GeoJSON features on the map using the provided styling configuration.

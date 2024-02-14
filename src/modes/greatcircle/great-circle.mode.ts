@@ -7,10 +7,14 @@ import {
 	Cursor,
 } from "../../common";
 import { LineString } from "geojson";
-import { TerraDrawBaseDrawMode } from "../base.mode";
+import {
+	BaseModeOptions,
+	CustomStyling,
+	TerraDrawBaseDrawMode,
+} from "../base.mode";
 import { BehaviorConfig } from "../base.behavior";
 import { getDefaultStyling } from "../../util/styling";
-import { GeoJSONStoreFeatures } from "../../store/store";
+import { FeatureId, GeoJSONStoreFeatures } from "../../store/store";
 import { greatCircleLine } from "../../geometry/shape/great-circle-line";
 import { GreatCircleSnappingBehavior } from "../great-circle-snapping.behavior";
 import { PixelDistanceBehavior } from "../pixel-distance.behavior";
@@ -35,12 +39,20 @@ interface Cursors {
 	close?: Cursor;
 }
 
+interface TerraDrawGreatCircleModeOptions<T extends CustomStyling>
+	extends BaseModeOptions<T> {
+	snapping?: boolean;
+	pointerDistance?: number;
+	keyEvents?: TerraDrawGreateCircleModeKeyEvents | null;
+	cursors?: Cursors;
+}
+
 export class TerraDrawGreatCircleMode extends TerraDrawBaseDrawMode<GreateCircleStyling> {
 	mode = "greatcircle";
 
 	private currentCoordinate = 0;
-	private currentId: string | undefined;
-	private closingPointId: string | undefined;
+	private currentId: FeatureId | undefined;
+	private closingPointId: FeatureId | undefined;
 	private keyEvents: TerraDrawGreateCircleModeKeyEvents;
 	private snappingEnabled: boolean;
 	private cursors: Required<Cursors>;
@@ -48,13 +60,7 @@ export class TerraDrawGreatCircleMode extends TerraDrawBaseDrawMode<GreateCircle
 	// Behaviors
 	private snapping!: GreatCircleSnappingBehavior;
 
-	constructor(options?: {
-		snapping?: boolean;
-		pointerDistance?: number;
-		styles?: Partial<GreateCircleStyling>;
-		keyEvents?: TerraDrawGreateCircleModeKeyEvents | null;
-		cursors?: Cursors;
-	}) {
+	constructor(options?: TerraDrawGreatCircleModeOptions<GreateCircleStyling>) {
 		super(options);
 
 		const defaultCursors = {
@@ -85,7 +91,7 @@ export class TerraDrawGreatCircleMode extends TerraDrawBaseDrawMode<GreateCircle
 	}
 
 	private close() {
-		if (!this.currentId) {
+		if (this.currentId === undefined) {
 			return;
 		}
 
@@ -131,7 +137,7 @@ export class TerraDrawGreatCircleMode extends TerraDrawBaseDrawMode<GreateCircle
 	onMouseMove(event: TerraDrawMouseEvent) {
 		this.setCursor(this.cursors.start);
 
-		if (!this.currentId && this.currentCoordinate === 0) {
+		if (this.currentId === undefined && this.currentCoordinate === 0) {
 			return;
 		} else if (
 			this.currentId &&

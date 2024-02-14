@@ -9,9 +9,13 @@ import {
 } from "../../common";
 import { haversineDistanceKilometers } from "../../geometry/measure/haversine-distance";
 import { circle } from "../../geometry/shape/create-circle";
-import { GeoJSONStoreFeatures } from "../../store/store";
+import { FeatureId, GeoJSONStoreFeatures } from "../../store/store";
 import { getDefaultStyling } from "../../util/styling";
-import { TerraDrawBaseDrawMode } from "../base.mode";
+import {
+	BaseModeOptions,
+	CustomStyling,
+	TerraDrawBaseDrawMode,
+} from "../base.mode";
 import { isValidNonIntersectingPolygonFeature } from "../../geometry/boolean/is-valid-polygon-feature";
 
 type TerraDrawCircleModeKeyEvents = {
@@ -30,19 +34,21 @@ interface Cursors {
 	start?: Cursor;
 }
 
+interface TerraDrawCircleModeOptions<T extends CustomStyling>
+	extends BaseModeOptions<T> {
+	keyEvents?: TerraDrawCircleModeKeyEvents | null;
+	cursors?: Cursors;
+}
+
 export class TerraDrawCircleMode extends TerraDrawBaseDrawMode<CirclePolygonStyling> {
 	mode = "circle";
 	private center: Position | undefined;
 	private clickCount = 0;
-	private currentCircleId: string | undefined;
+	private currentCircleId: FeatureId | undefined;
 	private keyEvents: TerraDrawCircleModeKeyEvents;
 	private cursors: Required<Cursors>;
 
-	constructor(options?: {
-		styles?: Partial<CirclePolygonStyling>;
-		keyEvents?: TerraDrawCircleModeKeyEvents | null;
-		cursors?: Cursors;
-	}) {
+	constructor(options?: TerraDrawCircleModeOptions<CirclePolygonStyling>) {
 		super(options);
 
 		const defaultCursors = {
@@ -69,7 +75,7 @@ export class TerraDrawCircleMode extends TerraDrawBaseDrawMode<CirclePolygonStyl
 	}
 
 	private close() {
-		if (!this.currentCircleId) {
+		if (this.currentCircleId === undefined) {
 			return;
 		}
 
@@ -122,6 +128,14 @@ export class TerraDrawCircleMode extends TerraDrawBaseDrawMode<CirclePolygonStyl
 			this.clickCount++;
 			this.setDrawing();
 		} else {
+			if (
+				this.clickCount === 1 &&
+				this.center &&
+				this.currentCircleId !== undefined
+			) {
+				this.createCircle(event);
+			}
+
 			// Finish drawing
 			this.close();
 		}
@@ -129,22 +143,7 @@ export class TerraDrawCircleMode extends TerraDrawBaseDrawMode<CirclePolygonStyl
 
 	/** @internal */
 	onMouseMove(event: TerraDrawMouseEvent) {
-		if (this.clickCount === 1 && this.center && this.currentCircleId) {
-			const distanceKm = haversineDistanceKilometers(this.center, [
-				event.lng,
-				event.lat,
-			]);
-
-			const updatedCircle = circle({
-				center: this.center,
-				radiusKilometers: distanceKm,
-				coordinatePrecision: this.coordinatePrecision,
-			});
-
-			this.store.updateGeometry([
-				{ id: this.currentCircleId, geometry: updatedCircle.geometry },
-			]);
-		}
+		this.createCircle(event);
 	}
 
 	/** @internal */
@@ -171,7 +170,7 @@ export class TerraDrawCircleMode extends TerraDrawBaseDrawMode<CirclePolygonStyl
 	/** @internal */
 	cleanUp() {
 		try {
-			if (this.currentCircleId) {
+			if (this.currentCircleId !== undefined) {
 				this.store.delete([this.currentCircleId]);
 			}
 		} catch (error) {}
@@ -230,6 +229,25 @@ export class TerraDrawCircleMode extends TerraDrawBaseDrawMode<CirclePolygonStyl
 			);
 		} else {
 			return false;
+		}
+	}
+
+	private createCircle(event: TerraDrawMouseEvent) {
+		if (this.clickCount === 1 && this.center && this.currentCircleId) {
+			const distanceKm = haversineDistanceKilometers(this.center, [
+				event.lng,
+				event.lat,
+			]);
+
+			const updatedCircle = circle({
+				center: this.center,
+				radiusKilometers: distanceKm,
+				coordinatePrecision: this.coordinatePrecision,
+			});
+
+			this.store.updateGeometry([
+				{ id: this.currentCircleId, geometry: updatedCircle.geometry },
+			]);
 		}
 	}
 }

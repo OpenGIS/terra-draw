@@ -1,5 +1,5 @@
 import { Feature, LineString, Polygon, Position } from "geojson";
-import { centroid } from "../centroid";
+// import { centroid } from "../centroid";
 import { rhumbBearing } from "../measure/rhumb-bearing";
 import { rhumbDestination } from "../measure/rhumb-destination";
 import { rhumbDistance } from "../measure/rhumb-distance";
@@ -9,13 +9,13 @@ import { rhumbDistance } from "../measure/rhumb-distance";
 export function transformScale(
 	feature: Feature<Polygon | LineString>,
 	factor: number,
+	origin: Position,
+	axis: "x" | "y" | "xy" = "xy",
 ) {
 	// Shortcut no-scaling
 	if (factor === 1) {
 		return feature;
 	}
-
-	const origin = centroid(feature);
 
 	const cooordinates =
 		feature.geometry.type === "Polygon"
@@ -27,8 +27,14 @@ export function transformScale(
 		const bearing = rhumbBearing(origin, pointCoords);
 		const newDistance = originalDistance * factor;
 		const newCoord = rhumbDestination(origin, newDistance, bearing);
-		pointCoords[0] = newCoord[0];
-		pointCoords[1] = newCoord[1];
+
+		if (axis === "x" || axis === "xy") {
+			pointCoords[0] = newCoord[0];
+		}
+
+		if (axis === "y" || axis === "xy") {
+			pointCoords[1] = newCoord[1];
+		}
 	});
 
 	return feature;

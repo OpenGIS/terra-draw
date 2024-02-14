@@ -16,13 +16,15 @@ type BasePointerListener = (event: PointerEvent) => void;
 type BaseKeyboardListener = (event: KeyboardEvent) => void;
 type BaseMouseListener = (event: MouseEvent) => void;
 
+export type BaseAdapterConfig = {
+	coordinatePrecision?: number;
+	minPixelDragDistanceDrawing?: number;
+	minPixelDragDistance?: number;
+	minPixelDragDistanceSelecting?: number;
+};
+
 export abstract class TerraDrawBaseAdapter {
-	constructor(config: {
-		coordinatePrecision?: number;
-		minPixelDragDistanceDrawing?: number;
-		minPixelDragDistance?: number;
-		minPixelDragDistanceSelecting?: number;
-	}) {
+	constructor(config: BaseAdapterConfig) {
 		this._minPixelDragDistance =
 			typeof config.minPixelDragDistance === "number"
 				? config.minPixelDragDistance
@@ -122,6 +124,15 @@ export abstract class TerraDrawBaseAdapter {
 		this._listeners.forEach((listener) => {
 			listener.register();
 		});
+	}
+
+	/**
+	 * Gets the coordinate precision.
+	 * @returns {number} The coordinate precision.
+	 * @description The coordinate precision is the number of decimal places. Note that the precision will be overriden by the precision of the TerraDraw Adapter.
+	 */
+	public getCoordinatePrecision() {
+		return this._coordinatePrecision;
 	}
 
 	private getAdapterListeners() {

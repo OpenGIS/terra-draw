@@ -461,6 +461,120 @@ describe("TerraDrawSelectMode", () => {
 					expect(onSelect).toBeCalledTimes(1);
 				});
 
+				it("does deselect if feature is clicked then map area is clicked and allowManualDeselection is true", () => {
+					setSelectMode({
+						allowManualDeselection: true,
+						flags: {
+							polygon: { feature: {} },
+						},
+					});
+
+					// Square Polygon
+					addPolygonToStore([
+						[0, 0],
+						[0, 1],
+						[1, 1],
+						[1, 0],
+						[0, 0],
+					]);
+
+					mockMouseEventBoundingBox([
+						[0, 0],
+						[0, 1],
+						[1, 1],
+						[1, 0],
+					]);
+
+					selectMode.onClick({
+						lng: 0.5,
+						lat: 0.5,
+						containerX: 0,
+						containerY: 0,
+						button: "left",
+						heldKeys: [],
+					});
+
+					expect(onSelect).toBeCalledTimes(1);
+
+					expect(onDeselect).toBeCalledTimes(0);
+
+					mockMouseEventBoundingBox([
+						[0, 0],
+						[0, 1],
+						[1, 1],
+						[1, 0],
+					]);
+
+					selectMode.onClick({
+						lng: 50.0,
+						lat: 59.0,
+						containerX: 100,
+						containerY: 100,
+						button: "left",
+						heldKeys: [],
+					});
+
+					expect(onSelect).toBeCalledTimes(1);
+					expect(onDeselect).toBeCalledTimes(1);
+				});
+
+				it("does not deselect if feature is clicked then map area is clicked but allowManualDeselection is false", () => {
+					setSelectMode({
+						allowManualDeselection: false,
+						flags: {
+							polygon: { feature: {} },
+						},
+					});
+
+					// Square Polygon
+					addPolygonToStore([
+						[0, 0],
+						[0, 1],
+						[1, 1],
+						[1, 0],
+						[0, 0],
+					]);
+
+					mockMouseEventBoundingBox([
+						[0, 0],
+						[0, 1],
+						[1, 1],
+						[1, 0],
+					]);
+
+					selectMode.onClick({
+						lng: 0.5,
+						lat: 0.5,
+						containerX: 0,
+						containerY: 0,
+						button: "left",
+						heldKeys: [],
+					});
+
+					expect(onSelect).toBeCalledTimes(1);
+
+					expect(onDeselect).toBeCalledTimes(0);
+
+					mockMouseEventBoundingBox([
+						[0, 0],
+						[0, 1],
+						[1, 1],
+						[1, 0],
+					]);
+
+					selectMode.onClick({
+						lng: 50.0,
+						lat: 59.0,
+						containerX: 100,
+						containerY: 100,
+						button: "left",
+						heldKeys: [],
+					});
+
+					expect(onSelect).toBeCalledTimes(1);
+					expect(onDeselect).toBeCalledTimes(0);
+				});
+
 				it("does not select if feature is not clicked", () => {
 					// Square Polygon
 					addPolygonToStore([
@@ -2330,6 +2444,259 @@ describe("TerraDrawSelectMode", () => {
 				expect(onChange).toHaveBeenNthCalledWith(
 					5,
 					[expect.any(String), expect.any(String)],
+					"update",
+				);
+			});
+		});
+
+		describe("drag maintaining shape", () => {
+			it("does trigger drag events if mode is draggable for linestring", () => {
+				setSelectMode({
+					flags: {
+						linestring: {
+							feature: {
+								coordinates: { draggable: true, resizable: "center-fixed" },
+							},
+						},
+					},
+				});
+
+				// We want to account for ignoring points branch
+				addPointToStore([100, 89]);
+				expect(onChange).toBeCalledTimes(1);
+
+				addLineStringToStore([
+					[0, 0],
+					[1, 1],
+				]);
+				expect(onChange).toBeCalledTimes(2);
+
+				mockMouseEventBoundingBox();
+				project
+					.mockReturnValueOnce({
+						x: 100,
+						y: 100,
+					})
+					.mockReturnValue({
+						x: 0,
+						y: 0,
+					});
+
+				selectMode.onClick({
+					lng: 0,
+					lat: 0,
+					containerX: 0,
+					containerY: 0,
+					button: "left",
+					heldKeys: [],
+				});
+
+				expect(onSelect).toBeCalledTimes(1);
+				expect(onChange).toBeCalledTimes(4);
+
+				// Select feature
+				expect(onChange).toHaveBeenNthCalledWith(
+					3,
+					[expect.any(String)],
+					"update",
+				);
+
+				// Create selection points
+				expect(onChange).toHaveBeenNthCalledWith(
+					4,
+					[expect.any(String), expect.any(String)],
+					"create",
+				);
+
+				mockMouseEventBoundingBox();
+				project
+					.mockReturnValueOnce({
+						x: 100,
+						y: 100,
+					})
+					.mockReturnValue({
+						x: 0,
+						y: 0,
+					});
+
+				selectMode.onDragStart(
+					{
+						lng: 1,
+						lat: 1,
+						containerX: 1,
+						containerY: 1,
+						button: "left",
+						heldKeys: [],
+					},
+					jest.fn(),
+				);
+
+				const setMapDraggability = jest.fn();
+				selectMode.onDrag(
+					{
+						lng: 1,
+						lat: 1,
+						containerX: 1,
+						containerY: 1,
+						button: "left",
+						heldKeys: [],
+					},
+					setMapDraggability,
+				);
+
+				selectMode.onDrag(
+					{
+						lng: 1,
+						lat: 1,
+						containerX: 1,
+						containerY: 1,
+						button: "left",
+						heldKeys: [],
+					},
+					setMapDraggability,
+				);
+
+				expect(onChange).toBeCalledTimes(5);
+
+				// Update linestring position and 1 selection points
+				// that gets moved
+				expect(onChange).toHaveBeenNthCalledWith(
+					5,
+					[expect.any(String), expect.any(String), expect.any(String)],
+					"update",
+				);
+			});
+
+			it("does trigger drag events if mode is draggable for polygon", () => {
+				setSelectMode({
+					flags: {
+						polygon: {
+							feature: {
+								coordinates: { draggable: true, resizable: "center-fixed" },
+							},
+						},
+					},
+				});
+
+				// We want to account for ignoring points branch
+				addPointToStore([100, 89]);
+
+				expect(onChange).toBeCalledTimes(1);
+
+				addPolygonToStore([
+					[0, 0],
+					[0, 1],
+					[1, 1],
+					[1, 0],
+					[0, 0],
+				]);
+
+				expect(onChange).toBeCalledTimes(2);
+
+				mockMouseEventBoundingBox();
+
+				project
+					.mockReturnValueOnce({
+						x: 100,
+						y: 100,
+					})
+					.mockReturnValue({
+						x: 0,
+						y: 0,
+					});
+
+				selectMode.onClick({
+					lng: 0,
+					lat: 0,
+					containerX: 0,
+					containerY: 0,
+					button: "left",
+					heldKeys: [],
+				});
+
+				expect(onSelect).toBeCalledTimes(1);
+				expect(onChange).toBeCalledTimes(4);
+
+				// Select feature
+				expect(onChange).toHaveBeenNthCalledWith(
+					3,
+					[expect.any(String)],
+					"update",
+				);
+
+				// Create selection points
+				expect(onChange).toHaveBeenNthCalledWith(
+					4,
+					[
+						expect.any(String),
+						expect.any(String),
+						expect.any(String),
+						expect.any(String),
+					],
+					"create",
+				);
+
+				mockMouseEventBoundingBox();
+				project
+					.mockReturnValueOnce({
+						x: 100,
+						y: 100,
+					})
+					.mockReturnValue({
+						x: 0,
+						y: 0,
+					});
+
+				selectMode.onDragStart(
+					{
+						lng: 1,
+						lat: 1,
+						containerX: 1,
+						containerY: 1,
+						button: "left",
+						heldKeys: [],
+					},
+					jest.fn(),
+				);
+
+				const setMapDraggability = jest.fn();
+				selectMode.onDrag(
+					{
+						lng: 1,
+						lat: 1,
+						containerX: 1,
+						containerY: 1,
+						button: "left",
+						heldKeys: [],
+					},
+					setMapDraggability,
+				);
+
+				selectMode.onDrag(
+					{
+						lng: 1,
+						lat: 1,
+						containerX: 1,
+						containerY: 1,
+						button: "left",
+						heldKeys: [],
+					},
+					setMapDraggability,
+				);
+
+				expect(onChange).toBeCalledTimes(5);
+
+				// Update polygon position and 1 selection points
+				// that gets moved
+				expect(onChange).toHaveBeenNthCalledWith(
+					5,
+					[
+						expect.any(String),
+						expect.any(String),
+						expect.any(String),
+						expect.any(String),
+						expect.any(String),
+					],
 					"update",
 				);
 			});

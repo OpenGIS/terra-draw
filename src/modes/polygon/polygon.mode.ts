@@ -8,7 +8,11 @@ import {
 } from "../../common";
 import { Polygon } from "geojson";
 import { selfIntersects } from "../../geometry/boolean/self-intersects";
-import { TerraDrawBaseDrawMode } from "../base.mode";
+import {
+	TerraDrawBaseDrawMode,
+	BaseModeOptions,
+	CustomStyling,
+} from "../base.mode";
 import { PixelDistanceBehavior } from "../pixel-distance.behavior";
 import { ClickBoundingBoxBehavior } from "../click-bounding-box.behavior";
 import { BehaviorConfig } from "../base.behavior";
@@ -17,7 +21,7 @@ import { SnappingBehavior } from "../snapping.behavior";
 import { coordinatesIdentical } from "../../geometry/coordinates-identical";
 import { ClosingPointsBehavior } from "./behaviors/closing-points.behavior";
 import { getDefaultStyling } from "../../util/styling";
-import { GeoJSONStoreFeatures } from "../../store/store";
+import { FeatureId, GeoJSONStoreFeatures } from "../../store/store";
 import { isValidPolygonFeature } from "../../geometry/boolean/is-valid-polygon-feature";
 
 type TerraDrawPolygonModeKeyEvents = {
@@ -41,11 +45,20 @@ interface Cursors {
 	close?: Cursor;
 }
 
+interface TerraDrawPolygonModeOptions<T extends CustomStyling>
+	extends BaseModeOptions<T> {
+	allowSelfIntersections?: boolean;
+	snapping?: boolean;
+	pointerDistance?: number;
+	keyEvents?: TerraDrawPolygonModeKeyEvents | null;
+	cursors?: Cursors;
+}
+
 export class TerraDrawPolygonMode extends TerraDrawBaseDrawMode<PolygonStyling> {
 	mode = "polygon";
 
 	private currentCoordinate = 0;
-	private currentId: string | undefined;
+	private currentId: FeatureId | undefined;
 	private allowSelfIntersections: boolean;
 	private keyEvents: TerraDrawPolygonModeKeyEvents;
 	private snappingEnabled: boolean;
@@ -57,14 +70,7 @@ export class TerraDrawPolygonMode extends TerraDrawBaseDrawMode<PolygonStyling> 
 	private cursors: Required<Cursors>;
 	private mouseMove = false;
 
-	constructor(options?: {
-		allowSelfIntersections?: boolean;
-		snapping?: boolean;
-		pointerDistance?: number;
-		styles?: Partial<PolygonStyling>;
-		keyEvents?: TerraDrawPolygonModeKeyEvents | null;
-		cursors?: Cursors;
-	}) {
+	constructor(options?: TerraDrawPolygonModeOptions<PolygonStyling>) {
 		super(options);
 
 		const defaultCursors = {
@@ -100,7 +106,7 @@ export class TerraDrawPolygonMode extends TerraDrawBaseDrawMode<PolygonStyling> 
 	}
 
 	private close() {
-		if (!this.currentId) {
+		if (this.currentId === undefined) {
 			return;
 		}
 
@@ -173,7 +179,7 @@ export class TerraDrawPolygonMode extends TerraDrawBaseDrawMode<PolygonStyling> 
 		this.mouseMove = true;
 		this.setCursor(this.cursors.start);
 
-		if (!this.currentId || this.currentCoordinate === 0) {
+		if (this.currentId === undefined || this.currentCoordinate === 0) {
 			return;
 		}
 

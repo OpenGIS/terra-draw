@@ -3,7 +3,7 @@ import {
 	SetCursor,
 	TerraDrawStylingFunction,
 } from "../common";
-import { GeoJSONStoreFeatures } from "../store/store";
+import { FeatureId, GeoJSONStoreFeatures } from "../store/store";
 import CircleGeom from "ol/geom/Circle";
 import Feature, { FeatureLike } from "ol/Feature";
 import GeoJSON from "ol/format/GeoJSON";
@@ -16,7 +16,7 @@ import VectorSource from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
 import { fromLonLat, toLonLat } from "ol/proj";
 import Geometry from "ol/geom/Geometry";
-import { TerraDrawBaseAdapter } from "./common/base.adapter";
+import { BaseAdapterConfig, TerraDrawBaseAdapter } from "./common/base.adapter";
 
 type InjectableOL = {
 	Circle: typeof CircleGeom;
@@ -31,11 +31,12 @@ type InjectableOL = {
 };
 
 export class TerraDrawOpenLayersAdapter extends TerraDrawBaseAdapter {
-	constructor(config: {
-		map: Map;
-		lib: InjectableOL;
-		coordinatePrecision?: number;
-	}) {
+	constructor(
+		config: {
+			map: Map;
+			lib: InjectableOL;
+		} & BaseAdapterConfig,
+	) {
 		super(config);
 
 		this._map = config.map;
@@ -175,7 +176,7 @@ export class TerraDrawOpenLayersAdapter extends TerraDrawBaseAdapter {
 		}
 	}
 
-	private removeFeature(id: string) {
+	private removeFeature(id: FeatureId) {
 		if (this._vectorSource) {
 			const deleted = this._vectorSource.getFeatureById(id);
 			if (!deleted) {

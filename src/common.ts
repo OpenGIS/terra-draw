@@ -2,6 +2,7 @@ import {
 	StoreChangeHandler,
 	GeoJSONStore,
 	GeoJSONStoreFeatures,
+	FeatureId,
 } from "./store/store";
 
 export type HexColor = `#${string}`;
@@ -83,6 +84,7 @@ export interface TerraDrawModeRegisterConfig {
 	onFinish: (finishedId: string) => void;
 	project: Project;
 	unproject: Unproject;
+	coordinatePrecision: number;
 }
 
 export type TerraDrawModeState =
@@ -118,7 +120,7 @@ export interface TerraDrawChanges {
 	created: GeoJSONStoreFeatures[];
 	updated: GeoJSONStoreFeatures[];
 	unchanged: GeoJSONStoreFeatures[];
-	deletedIds: string[];
+	deletedIds: FeatureId[];
 }
 
 export type TerraDrawStylingFunction = {
@@ -136,6 +138,7 @@ export interface TerraDrawAdapter {
 	unregister(): void;
 	render(changes: TerraDrawChanges, styling: TerraDrawStylingFunction): void;
 	clear(): void;
+	getCoordinatePrecision(): number;
 }
 
 export const SELECT_PROPERTIES = {

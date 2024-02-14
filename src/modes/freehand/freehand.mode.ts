@@ -8,9 +8,13 @@ import {
 } from "../../common";
 import { Polygon } from "geojson";
 
-import { TerraDrawBaseDrawMode } from "../base.mode";
+import {
+	BaseModeOptions,
+	CustomStyling,
+	TerraDrawBaseDrawMode,
+} from "../base.mode";
 import { getDefaultStyling } from "../../util/styling";
-import { GeoJSONStoreFeatures } from "../../store/store";
+import { FeatureId, GeoJSONStoreFeatures } from "../../store/store";
 import { pixelDistance } from "../../geometry/measure/pixel-distance";
 import { isValidPolygonFeature } from "../../geometry/boolean/is-valid-polygon-feature";
 
@@ -35,24 +39,26 @@ interface Cursors {
 	close?: Cursor;
 }
 
+interface TerraDrawFreehandModeOptions<T extends CustomStyling>
+	extends BaseModeOptions<T> {
+	minDistance?: number;
+	preventPointsNearClose?: boolean;
+	keyEvents?: TerraDrawFreehandModeKeyEvents | null;
+	cursors?: Cursors;
+}
+
 export class TerraDrawFreehandMode extends TerraDrawBaseDrawMode<FreehandPolygonStyling> {
 	mode = "freehand";
 
 	private startingClick = false;
-	private currentId: string | undefined;
-	private closingPointId: string | undefined;
+	private currentId: FeatureId | undefined;
+	private closingPointId: FeatureId | undefined;
 	private minDistance: number;
 	private keyEvents: TerraDrawFreehandModeKeyEvents;
 	private cursors: Required<Cursors>;
 	private preventPointsNearClose: boolean;
 
-	constructor(options?: {
-		styles?: Partial<FreehandPolygonStyling>;
-		minDistance?: number;
-		preventPointsNearClose?: boolean;
-		keyEvents?: TerraDrawFreehandModeKeyEvents | null;
-		cursors?: Cursors;
-	}) {
+	constructor(options?: TerraDrawFreehandModeOptions<FreehandPolygonStyling>) {
 		super(options);
 
 		const defaultCursors = {
@@ -85,7 +91,7 @@ export class TerraDrawFreehandMode extends TerraDrawBaseDrawMode<FreehandPolygon
 	}
 
 	private close() {
-		if (!this.currentId) {
+		if (this.currentId === undefined) {
 			return;
 		}
 
@@ -119,7 +125,7 @@ export class TerraDrawFreehandMode extends TerraDrawBaseDrawMode<FreehandPolygon
 
 	/** @internal */
 	onMouseMove(event: TerraDrawMouseEvent) {
-		if (!this.currentId || this.startingClick === false) {
+		if (this.currentId === undefined || this.startingClick === false) {
 			return;
 		}
 

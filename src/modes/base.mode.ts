@@ -10,13 +10,14 @@ import {
 	TerraDrawMouseEvent,
 } from "../common";
 import {
+	FeatureId,
 	GeoJSONStore,
 	GeoJSONStoreFeatures,
 	StoreChangeHandler,
 } from "../store/store";
 import { isValidStoreFeature } from "../store/store-feature-validation";
 
-type CustomStyling = Record<
+export type CustomStyling = Record<
 	string,
 	| string
 	| number
@@ -30,6 +31,12 @@ export enum ModeTypes {
 	Static = "static",
 	Render = "render",
 }
+
+export type BaseModeOptions<T extends CustomStyling> = {
+	styles?: Partial<T>;
+	pointerDistance?: number;
+};
+
 export abstract class TerraDrawBaseDrawMode<T extends CustomStyling> {
 	protected _state: TerraDrawModeState;
 	get state() {
@@ -54,7 +61,7 @@ export abstract class TerraDrawBaseDrawMode<T extends CustomStyling> {
 
 	protected behaviors: TerraDrawModeBehavior[] = [];
 	protected pointerDistance: number;
-	protected coordinatePrecision: number;
+	protected coordinatePrecision!: number;
 	protected onStyleChange!: StoreChangeHandler;
 	protected store!: GeoJSONStore;
 	protected setDoubleClickToZoom!: TerraDrawModeRegisterConfig["setDoubleClickToZoom"];
@@ -63,18 +70,11 @@ export abstract class TerraDrawBaseDrawMode<T extends CustomStyling> {
 	protected setCursor!: TerraDrawModeRegisterConfig["setCursor"];
 	protected registerBehaviors(behaviorConfig: BehaviorConfig): void {}
 
-	constructor(options?: {
-		styles?: Partial<T>;
-		pointerDistance?: number;
-		coordinatePrecision?: number;
-	}) {
+	constructor(options?: BaseModeOptions<T>) {
 		this._state = "unregistered";
 		this._styles =
 			options && options.styles ? { ...options.styles } : ({} as Partial<T>);
-
 		this.pointerDistance = (options && options.pointerDistance) || 40;
-
-		this.coordinatePrecision = (options && options.coordinatePrecision) || 9;
 	}
 
 	type = ModeTypes.Drawing;
@@ -124,6 +124,7 @@ export abstract class TerraDrawBaseDrawMode<T extends CustomStyling> {
 			this.setCursor = config.setCursor;
 			this.onStyleChange = config.onChange;
 			this.onFinish = config.onFinish;
+			this.coordinatePrecision = config.coordinatePrecision;
 
 			this.registerBehaviors({
 				mode: config.mode,
@@ -131,7 +132,7 @@ export abstract class TerraDrawBaseDrawMode<T extends CustomStyling> {
 				project: this.project,
 				unproject: this.unproject,
 				pointerDistance: this.pointerDistance,
-				coordinatePrecision: this.coordinatePrecision,
+				coordinatePrecision: config.coordinatePrecision,
 			});
 		} else {
 			throw new Error("Can not register unless mode is unregistered");
@@ -139,7 +140,11 @@ export abstract class TerraDrawBaseDrawMode<T extends CustomStyling> {
 	}
 
 	validateFeature(feature: unknown): feature is GeoJSONStoreFeatures {
-		return isValidStoreFeature(feature);
+		if (this._state === "unregistered") {
+			throw new Error("Mode must be registered");
+		}
+
+		return isValidStoreFeature(feature, this.store.idStrategy.isValidId);
 	}
 
 	abstract start(): void;
@@ -147,9 +152,9 @@ export abstract class TerraDrawBaseDrawMode<T extends CustomStyling> {
 	abstract cleanUp(): void;
 	abstract styleFeature(feature: GeoJSONStoreFeatures): TerraDrawAdapterStyling;
 
-	onFinish(finishedId: string) {}
-	onDeselect(deselectedId: string) {}
-	onSelect(selectedId: string) {}
+	onFinish(finishedId: FeatureId) {}
+	onDeselect(deselectedId: FeatureId) {}
+	onSelect(selectedId: FeatureId) {}
 	onKeyDown(event: TerraDrawKeyboardEvent) {}
 	onKeyUp(event: TerraDrawKeyboardEvent) {}
 	onMouseMove(event: TerraDrawMouseEvent) {}

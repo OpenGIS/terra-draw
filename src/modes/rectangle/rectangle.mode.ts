@@ -7,9 +7,13 @@ import {
 	NumericStyling,
 	Cursor,
 } from "../../common";
-import { GeoJSONStoreFeatures } from "../../store/store";
+import { FeatureId, GeoJSONStoreFeatures } from "../../store/store";
 import { getDefaultStyling } from "../../util/styling";
-import { TerraDrawBaseDrawMode } from "../base.mode";
+import {
+	BaseModeOptions,
+	CustomStyling,
+	TerraDrawBaseDrawMode,
+} from "../base.mode";
 import { isValidNonIntersectingPolygonFeature } from "../../geometry/boolean/is-valid-polygon-feature";
 
 type TerraDrawRectangleModeKeyEvents = {
@@ -28,19 +32,23 @@ interface Cursors {
 	start?: Cursor;
 }
 
+interface TerraDrawRectangleModeOptions<T extends CustomStyling>
+	extends BaseModeOptions<T> {
+	keyEvents?: TerraDrawRectangleModeKeyEvents | null;
+	cursors?: Cursors;
+}
+
 export class TerraDrawRectangleMode extends TerraDrawBaseDrawMode<RectanglePolygonStyling> {
 	mode = "rectangle";
 	private center: Position | undefined;
 	private clickCount = 0;
-	private currentRectangleId: string | undefined;
+	private currentRectangleId: FeatureId | undefined;
 	private keyEvents: TerraDrawRectangleModeKeyEvents;
 	private cursors: Required<Cursors>;
 
-	constructor(options?: {
-		styles?: Partial<RectanglePolygonStyling>;
-		keyEvents?: TerraDrawRectangleModeKeyEvents | null;
-		cursors?: Cursors;
-	}) {
+	constructor(
+		options?: TerraDrawRectangleModeOptions<RectanglePolygonStyling>,
+	) {
 		super(options);
 
 		const defaultCursors = {

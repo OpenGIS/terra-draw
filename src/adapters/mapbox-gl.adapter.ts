@@ -11,10 +11,10 @@ import mapboxgl, {
 	PointLike,
 } from "mapbox-gl";
 import { GeoJSONStoreFeatures, GeoJSONStoreGeometries } from "../store/store";
-import { TerraDrawBaseAdapter } from "./common/base.adapter";
+import { BaseAdapterConfig, TerraDrawBaseAdapter } from "./common/base.adapter";
 
 export class TerraDrawMapboxGLAdapter extends TerraDrawBaseAdapter {
-	constructor(config: { map: mapboxgl.Map; coordinatePrecision?: number }) {
+	constructor(config: { map: mapboxgl.Map } & BaseAdapterConfig) {
 		super(config);
 
 		this._map = config.map;
@@ -46,6 +46,12 @@ export class TerraDrawMapboxGLAdapter extends TerraDrawBaseAdapter {
 			});
 
 			this._rendered = false;
+
+			// TODO: This is necessary to prevent render artifacts, perhaps there is a nicer solution?
+			if (this._nextRender) {
+				cancelAnimationFrame(this._nextRender);
+				this._nextRender = undefined;
+			}
 		}
 	}
 

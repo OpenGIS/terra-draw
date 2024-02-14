@@ -8,14 +8,18 @@ import {
 } from "../../common";
 import { LineString } from "geojson";
 import { selfIntersects } from "../../geometry/boolean/self-intersects";
-import { TerraDrawBaseDrawMode } from "../base.mode";
+import {
+	BaseModeOptions,
+	CustomStyling,
+	TerraDrawBaseDrawMode,
+} from "../base.mode";
 import { pixelDistance } from "../../geometry/measure/pixel-distance";
 import { BehaviorConfig } from "../base.behavior";
 import { ClickBoundingBoxBehavior } from "../click-bounding-box.behavior";
 import { PixelDistanceBehavior } from "../pixel-distance.behavior";
 import { SnappingBehavior } from "../snapping.behavior";
 import { getDefaultStyling } from "../../util/styling";
-import { GeoJSONStoreFeatures } from "../../store/store";
+import { FeatureId, GeoJSONStoreFeatures } from "../../store/store";
 
 type TerraDrawLineStringModeKeyEvents = {
 	cancel: KeyboardEvent["key"] | null;
@@ -36,12 +40,21 @@ interface Cursors {
 	close?: Cursor;
 }
 
+interface TerraDrawLineStringModeOptions<T extends CustomStyling>
+	extends BaseModeOptions<T> {
+	snapping?: boolean;
+	allowSelfIntersections?: boolean;
+	pointerDistance?: number;
+	keyEvents?: TerraDrawLineStringModeKeyEvents | null;
+	cursors?: Cursors;
+}
+
 export class TerraDrawLineStringMode extends TerraDrawBaseDrawMode<LineStringStyling> {
 	mode = "linestring";
 
 	private currentCoordinate = 0;
-	private currentId: string | undefined;
-	private closingPointId: string | undefined;
+	private currentId: FeatureId | undefined;
+	private closingPointId: FeatureId | undefined;
 	private allowSelfIntersections;
 	private keyEvents: TerraDrawLineStringModeKeyEvents;
 	private snappingEnabled: boolean;
@@ -51,14 +64,7 @@ export class TerraDrawLineStringMode extends TerraDrawBaseDrawMode<LineStringSty
 	// Behaviors
 	private snapping!: SnappingBehavior;
 
-	constructor(options?: {
-		snapping?: boolean;
-		allowSelfIntersections?: boolean;
-		pointerDistance?: number;
-		styles?: Partial<LineStringStyling>;
-		keyEvents?: TerraDrawLineStringModeKeyEvents | null;
-		cursors?: Cursors;
-	}) {
+	constructor(options?: TerraDrawLineStringModeOptions<LineStringStyling>) {
 		super(options);
 
 		const defaultCursors = {
@@ -94,7 +100,7 @@ export class TerraDrawLineStringMode extends TerraDrawBaseDrawMode<LineStringSty
 	}
 
 	private close() {
-		if (!this.currentId) {
+		if (this.currentId === undefined) {
 			return;
 		}
 
@@ -158,7 +164,7 @@ export class TerraDrawLineStringMode extends TerraDrawBaseDrawMode<LineStringSty
 		this.mouseMove = true;
 		this.setCursor(this.cursors.start);
 
-		if (!this.currentId || this.currentCoordinate === 0) {
+		if (this.currentId === undefined || this.currentCoordinate === 0) {
 			return;
 		}
 		const currentLineGeometry = this.store.getGeometryCopy<LineString>(

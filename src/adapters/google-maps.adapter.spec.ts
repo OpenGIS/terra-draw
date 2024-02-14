@@ -31,6 +31,7 @@ const createMockGoogleMap = (overrides?: Partial<google.maps.Map>) => {
 		getCenter: jest.fn(),
 		getClickableIcons: jest.fn(),
 		getDiv: jest.fn(() => ({
+			id: "map",
 			querySelector: jest.fn(),
 		})),
 		getHeading: jest.fn(),
@@ -73,6 +74,10 @@ describe("TerraDrawGoogleMapsAdapter", () => {
 					})),
 				} as any,
 				map: createMockGoogleMap(),
+				minPixelDragDistance: 1,
+				minPixelDragDistanceSelecting: 8,
+				minPixelDragDistanceDrawing: 8,
+				coordinatePrecision: 9,
 			});
 
 			expect(adapter).toBeDefined();
@@ -82,6 +87,27 @@ describe("TerraDrawGoogleMapsAdapter", () => {
 			expect(adapter.project).toBeDefined();
 			expect(adapter.unproject).toBeDefined();
 			expect(adapter.setCursor).toBeDefined();
+		});
+
+		it("throws an error if the map container id is not set", () => {
+			const map = createMockGoogleMap();
+			map.getDiv = jest.fn();
+
+			expect(() => {
+				new TerraDrawGoogleMapsAdapter({
+					lib: {
+						LatLng: jest.fn(),
+						OverlayView: jest.fn().mockImplementation(() => ({
+							setMap: jest.fn(),
+						})),
+					} as any,
+					map,
+					minPixelDragDistance: 1,
+					minPixelDragDistanceSelecting: 8,
+					minPixelDragDistanceDrawing: 8,
+					coordinatePrecision: 9,
+				});
+			}).toThrowError();
 		});
 	});
 
@@ -93,7 +119,10 @@ describe("TerraDrawGoogleMapsAdapter", () => {
 				addEventListener: jest.fn(),
 			} as unknown as HTMLDivElement;
 			const mockMap = createMockGoogleMap({
-				getDiv: jest.fn(() => ({ querySelector: jest.fn(() => div) })) as any,
+				getDiv: jest.fn(() => ({
+					id: "map",
+					querySelector: jest.fn(() => div),
+				})) as any,
 				data: {
 					addListener: addListenerMock,
 				} as any,
@@ -132,7 +161,10 @@ describe("TerraDrawGoogleMapsAdapter", () => {
 				removeEventListener: jest.fn(),
 			} as unknown as HTMLDivElement;
 			const mockMap = createMockGoogleMap({
-				getDiv: jest.fn(() => ({ querySelector: jest.fn(() => div) })) as any,
+				getDiv: jest.fn(() => ({
+					id: "map",
+					querySelector: jest.fn(() => div),
+				})) as any,
 				data: {} as any,
 			});
 			const adapter = new TerraDrawGoogleMapsAdapter({
@@ -158,7 +190,10 @@ describe("TerraDrawGoogleMapsAdapter", () => {
 				removeEventListener: jest.fn(),
 			} as unknown as HTMLDivElement;
 			const mockMap = createMockGoogleMap({
-				getDiv: jest.fn(() => ({ querySelector: jest.fn(() => div) })) as any,
+				getDiv: jest.fn(() => ({
+					id: "map",
+					querySelector: jest.fn(() => div),
+				})) as any,
 				data: {
 					addListener: addListenerMock,
 				} as any,
@@ -216,6 +251,7 @@ describe("TerraDrawGoogleMapsAdapter", () => {
 				getDiv: jest.fn(
 					() =>
 						({
+							id: "map",
 							getBoundingClientRect: jest.fn(() => ({})),
 						}) as unknown as HTMLDivElement,
 				),
@@ -251,6 +287,7 @@ describe("TerraDrawGoogleMapsAdapter", () => {
 				getDiv: jest.fn(
 					() =>
 						({
+							id: "map",
 							getBoundingClientRect: jest.fn(() => ({})),
 						}) as unknown as HTMLDivElement,
 				),
@@ -448,6 +485,7 @@ describe("TerraDrawGoogleMapsAdapter", () => {
 		it("is no-op for cursor: unset", () => {
 			const map = createMockGoogleMap() as google.maps.Map;
 			const container = {
+				id: "map",
 				offsetLeft: 0,
 				offsetTop: 0,
 				style: { removeProperty: jest.fn(), cursor: "initial" },
@@ -465,6 +503,10 @@ describe("TerraDrawGoogleMapsAdapter", () => {
 				} as any,
 				map,
 			});
+
+			// We want to reset getDiv so we can correctly ensure
+			// map.getDiv is not called in setCursor
+			jest.resetAllMocks();
 
 			adapter.setCursor("unset");
 
@@ -497,17 +539,18 @@ describe("TerraDrawGoogleMapsAdapter", () => {
 			const mockQuerySelector = jest.spyOn(document, "querySelector");
 
 			mockQuerySelector.mockImplementationOnce(
-				() => ({ ariaLabel: "Map" }) as Element,
+				() => ({ classList: { add: jest.fn() } }) as unknown as Element,
 			);
 
 			adapter.setCursor("pointer");
 
-			expect(map.getDiv).toHaveBeenCalledTimes(1);
+			// Once in constructor, once in setCursor
+			expect(map.getDiv).toHaveBeenCalledTimes(2);
 
 			const firstSheetAndRule = document.styleSheets[0]
 				.cssRules[0] as CSSStyleRule;
 			expect(
-				firstSheetAndRule.selectorText.startsWith(`#${elId}`),
+				firstSheetAndRule.selectorText.startsWith(`.terra-draw-google-maps`),
 			).toBeTruthy();
 			expect(
 				firstSheetAndRule.cssText.includes(`cursor: pointer`),
@@ -540,7 +583,8 @@ describe("TerraDrawGoogleMapsAdapter", () => {
 			adapter.setCursor("pointer");
 			adapter.setCursor("pointer");
 
-			expect(map.getDiv).toHaveBeenCalledTimes(1);
+			// Once in constructor, once in setCursor
+			expect(map.getDiv).toHaveBeenCalledTimes(2);
 		});
 	});
 

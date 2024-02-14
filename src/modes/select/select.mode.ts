@@ -8,7 +8,12 @@ import {
 	Cursor,
 } from "../../common";
 import { Point, Position } from "geojson";
-import { ModeTypes, TerraDrawBaseDrawMode } from "../base.mode";
+import {
+	BaseModeOptions,
+	CustomStyling,
+	ModeTypes,
+	TerraDrawBaseDrawMode,
+} from "../base.mode";
 import { MidPointBehavior } from "./behaviors/midpoint.behavior";
 import { SelectionPointBehavior } from "./behaviors/selection-point.behavior";
 import { FeatureAtPointerEventBehavior } from "./behaviors/feature-at-pointer-event.behavior";
@@ -19,8 +24,12 @@ import { DragCoordinateBehavior } from "./behaviors/drag-coordinate.behavior";
 import { BehaviorConfig } from "../base.behavior";
 import { RotateFeatureBehavior } from "./behaviors/rotate-feature.behavior";
 import { ScaleFeatureBehavior } from "./behaviors/scale-feature.behavior";
-import { GeoJSONStoreFeatures } from "../../store/store";
+import { FeatureId, GeoJSONStoreFeatures } from "../../store/store";
 import { getDefaultStyling } from "../../util/styling";
+import {
+	DragCoordinateResizeBehavior,
+	ResizeOptions,
+} from "./behaviors/drag-coordinate-resize.behavior";
 
 type TerraDrawSelectModeKeyEvents = {
 	deselect: KeyboardEvent["key"] | null;
@@ -38,6 +47,7 @@ type ModeFlags = {
 		coordinates?: {
 			midpoints?: boolean;
 			draggable?: boolean;
+			resizable?: ResizeOptions;
 			deletable?: boolean;
 		};
 	};
@@ -80,10 +90,21 @@ interface Cursors {
 	insertMidpoint?: Cursor;
 }
 
+interface TerraDrawSelectModeOptions<T extends CustomStyling>
+	extends BaseModeOptions<T> {
+	pointerDistance?: number;
+	flags?: { [mode: string]: ModeFlags };
+	keyEvents?: TerraDrawSelectModeKeyEvents | null;
+	dragEventThrottle?: number;
+	cursors?: Cursors;
+	allowManualDeselection?: boolean;
+}
+
 export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling> {
 	public type = ModeTypes.Select;
 	public mode = "select";
 
+	private allowManualDeselection = true;
 	private dragEventThrottle = 5;
 	private dragEventCount = 0;
 	private selected: string[] = [];
@@ -101,16 +122,10 @@ export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling>
 	private dragCoordinate!: DragCoordinateBehavior;
 	private rotateFeature!: RotateFeatureBehavior;
 	private scaleFeature!: ScaleFeatureBehavior;
+	private dragCoordinateResizeFeature!: DragCoordinateResizeBehavior;
 	private cursors: Required<Cursors>;
 
-	constructor(options?: {
-		styles?: Partial<SelectionStyling>;
-		pointerDistance?: number;
-		flags?: { [mode: string]: ModeFlags };
-		keyEvents?: TerraDrawSelectModeKeyEvents | null;
-		dragEventThrottle?: number;
-		cursors?: Cursors;
-	}) {
+	constructor(options?: TerraDrawSelectModeOptions<SelectionStyling>) {
 		super(options);
 
 		this.flags = options && options.flags ? options.flags : {};
@@ -155,6 +170,8 @@ export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling>
 				options.dragEventThrottle !== undefined &&
 				options.dragEventThrottle) ||
 			5;
+
+		this.allowManualDeselection = options?.allowManualDeselection ?? true;
 	}
 
 	setSelecting() {
@@ -196,6 +213,12 @@ export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling>
 			this.midPoints,
 		);
 		this.dragCoordinate = new DragCoordinateBehavior(
+			config,
+			this.pixelDistance,
+			this.selectionPoints,
+			this.midPoints,
+		);
+		this.dragCoordinateResizeFeature = new DragCoordinateResizeBehavior(
 			config,
 			this.pixelDistance,
 			this.selectionPoints,
@@ -244,7 +267,7 @@ export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling>
 
 		let clickedFeatureDistance = Infinity;
 
-		this.selectionPoints.ids.forEach((id: string) => {
+		this.selectionPoints.ids.forEach((id) => {
 			const geometry = this.store.getGeometryCopy<Point>(id);
 			const distance = this.pixelDistance.measure(event, geometry.coordinates);
 
@@ -348,7 +371,6 @@ export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling>
 	private onLeftClick(event: TerraDrawMouseEvent) {
 		const { clickedFeature, clickedMidPoint } = this.featuresAtMouseEvent.find(
 			event,
-
 			this.selected.length > 0,
 		);
 
@@ -429,7 +451,7 @@ export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling>
 					);
 				}
 			}
-		} else if (this.selected.length) {
+		} else if (this.selected.length && this.allowManualDeselection) {
 			this.deselect();
 			return;
 		}
@@ -557,6 +579,7 @@ export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling>
 			selectedId,
 		);
 
+		// Drag Coordinate
 		if (
 			modeFlags &&
 			modeFlags.feature &&
@@ -565,11 +588,23 @@ export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling>
 			draggableCoordinateIndex !== -1
 		) {
 			this.setCursor(this.cursors.dragStart);
-			this.dragCoordinate.startDragging(selectedId, draggableCoordinateIndex);
+
+			// With Maintained Shape
+			if (modeFlags.feature.coordinates.resizable) {
+				this.dragCoordinateResizeFeature.startDragging(
+					selectedId,
+					draggableCoordinateIndex,
+				);
+			} else {
+				// Without with Maintained Shape
+				this.dragCoordinate.startDragging(selectedId, draggableCoordinateIndex);
+			}
+
 			setMapDraggability(false);
 			return;
 		}
 
+		// Drag Feature
 		if (
 			modeFlags &&
 			modeFlags.feature &&
@@ -635,6 +670,20 @@ export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling>
 			return;
 		}
 
+		if (
+			this.dragCoordinateResizeFeature.isDragging() &&
+			modeFlags.feature &&
+			modeFlags.feature.coordinates &&
+			modeFlags.feature.coordinates.resizable
+		) {
+			setMapDraggability(false);
+			this.dragCoordinateResizeFeature.drag(
+				event,
+				modeFlags.feature.coordinates.resizable,
+			);
+			return;
+		}
+
 		// Check if coordinate is draggable and is dragged
 		if (this.dragCoordinate.isDragging()) {
 			this.dragCoordinate.drag(event, canSelfIntersect);
@@ -667,6 +716,7 @@ export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling>
 
 		this.dragCoordinate.stopDragging();
 		this.dragFeature.stopDragging();
+		this.dragCoordinateResizeFeature.stopDragging();
 		this.rotateFeature.reset();
 		this.scaleFeature.reset();
 		setMapDraggability(true);
@@ -699,7 +749,7 @@ export class TerraDrawSelectMode extends TerraDrawBaseDrawMode<SelectionStyling>
 		let nearbySelectionPoint = false;
 		// TODO: Is there a cleaner way to handle prioritising
 		// dragging selection points?
-		this.selectionPoints.ids.forEach((id: string) => {
+		this.selectionPoints.ids.forEach((id: FeatureId) => {
 			const geometry = this.store.getGeometryCopy<Point>(id);
 			const distance = this.pixelDistance.measure(event, geometry.coordinates);
 			if (distance < this.pointerDistance) {
