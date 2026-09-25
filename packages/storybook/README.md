@@ -2,7 +2,7 @@
 
 **Storybook.js** is an open-source tool traditionally used for building UI components and pages in isolation. It streamlines the process of developing, testing, and documenting components by allowing developers to create "stories" — individual states of a component — outside of the main application.
 
-We use Storybook because it allows for easy give many different Terra Draw functionality in isolation. Because Terra Draw is very configurable, Storybook lends itself to developing locally and also showing examples across different mapping libraries.
+Storybook provides a convenient way to place Terra Draw functionality in an isolated interface. Because Terra Draw is very configurable, Storybook lends itself to developing locally and also showing examples across different mapping libraries.
 
 ## Development
 
