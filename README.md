@@ -41,8 +41,8 @@ We create GitHub releases when we release new packages. We also keep automated c
 
 ### Development & Contributing
 
-* For development, please see the [the development documentation](./guides/7.DEVELOPMENT.md)
-* For guidance on contributing, please see the [the contributing documentation](./guides/7.DEVELOPMENT.md#contributing)
+* For development, please see the [the development documentation](./guides/7.DEVELOPMENT.md).
+* For guidance on contributing, please see the [the contributing documentation](./guides/7.DEVELOPMENT.md#contributing).
 
 ### Project Website
 
